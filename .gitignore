@@ -1,0 +1,11 @@
+.vs
+
+__pycache__
+
+tesseract/*
+!tesseract/README.md
+
+models/*
+!models/README.md
+
+screenshots/*.png
