@@ -8,4 +8,5 @@ tesseract/*
 models/*
 !models/README.md
 
-screenshots/*.png
+screenshots/*
+!screenshots/README.md

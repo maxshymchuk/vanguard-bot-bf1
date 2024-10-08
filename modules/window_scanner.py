@@ -2,7 +2,7 @@ import pygetwindow as gw
 import time
 import globals
 
-def scan_window():
+def scan_window() -> None:
     print(f'Scanning for {globals.window_title}')
     while not globals.threads_stop.is_set():
         with globals.threads_lock:
