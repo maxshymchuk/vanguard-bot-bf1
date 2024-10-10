@@ -3,6 +3,9 @@ datasets/train/GBRPierceArrowAALorry.png,artillery_truck
 datasets/train/IlyaMurometsHeavyBomber.png,heavy_bomber
 datasets/train/MaximSMG.png,smg08
 datasets/train/MedicRifleLauncher_B.png,rifle_launcher
+datasets/train/smg08_small.png,smg08
+datasets/train/artytruck_small.png,artillery_truck
+datasets/train/heavybomber_small.png,heavy_bomber
 datasets/train/Barm1918.png,allowed
 datasets/train/Beretta1915.png,allowed
 datasets/train/Beretta1918.png,allowed

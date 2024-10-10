@@ -3,5 +3,11 @@ datasets/test/GBRPierceArrowAALorry.png,artillery_truck
 datasets/test/IlyaMurometsHeavyBomber.png,heavy_bomber
 datasets/test/MaximSMG.png,smg08
 datasets/test/MedicRifleLauncher_B.png,rifle_launcher
+datasets/test/smg08_small.png,smg08
 datasets/test/Chauchat.png,allowed
 datasets/test/GBRMarkV.png,allowed
+datasets/test/bar.png,allowed
+datasets/test/mp18.png,allowed
+datasets/test/hatchet.png,allowed
+datasets/test/landship.png,allowed
+datasets/test/plane1.png,allowed

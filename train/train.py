@@ -36,7 +36,7 @@ class Bf1Icons(Dataset):
         return self.df.shape[0]
 
     def __getitem__(self, idx):
-        image = Image.open(self.df.icon[idx]).convert("RGB")
+        image = Image.open(self.df.icon[idx]).convert("L")
         label = self.class_list.index(self.df.label[idx])
   
         if self.transform:
@@ -48,8 +48,8 @@ train_dataset = Bf1Icons(csv_file='datasets/train/bf1iconstrain.csv', class_list
 test_dataset = Bf1Icons(csv_file='datasets/test/bf1iconstest.csv', class_list=class_labels, transform=data_transform)
 
 num_classes = len(class_labels)
-batch_size = 5
-epochs = 10
+batch_size = 16
+epochs = 50
 learning_rate = 1e-3
 
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size, shuffle=True)
@@ -78,87 +78,105 @@ print(f"Using {device} device")
 class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
-        self.conv_layer1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3)
-        self.conv_layer2 = nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3)
-        self.max_pool1 = nn.MaxPool2d(kernel_size = 2, stride = 2)
-        
-        self.conv_layer3 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3)
-        self.conv_layer4 = nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3)
-        self.max_pool2 = nn.MaxPool2d(kernel_size = 2, stride = 2)
-        
-        self.fc1 = nn.Linear(64*13*61, 128) 
-        self.relu1 = nn.ReLU()
-        self.fc2 = nn.Linear(128, num_classes)
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=12, kernel_size=5, stride=1, padding=1)
+        self.bn1 = nn.BatchNorm2d(12)
+        self.conv2 = nn.Conv2d(in_channels=12, out_channels=12, kernel_size=5, stride=1, padding=1)
+        self.bn2 = nn.BatchNorm2d(12)
+        self.pool = nn.MaxPool2d(2,2)
+        self.conv4 = nn.Conv2d(in_channels=12, out_channels=24, kernel_size=5, stride=1, padding=1)
+        self.bn4 = nn.BatchNorm2d(24)
+        self.conv5 = nn.Conv2d(in_channels=24, out_channels=24, kernel_size=5, stride=1, padding=1)
+        self.bn5 = nn.BatchNorm2d(24)
+        self.fc1 = nn.Linear(76128, num_classes)
     def forward(self, input):
-        out = self.conv_layer1(input)
-        out = self.conv_layer2(out)
-        out = self.max_pool1(out)
-        
-        out = self.conv_layer3(out)
-        out = self.conv_layer4(out)
-        out = self.max_pool2(out)
-                
-        out = out.reshape(out.size(0), -1)
-        
-        out = self.fc1(out)
-        out = self.relu1(out)
-        out = self.fc2(out)
-        return out
+        output = F.relu(self.bn1(self.conv1(input)))      
+        output = F.relu(self.bn2(self.conv2(output)))     
+        output = self.pool(output)                        
+        output = F.relu(self.bn4(self.conv4(output)))     
+        output = F.relu(self.bn5(self.conv5(output)))     
+        output = output.view(output.size(0), -1)
+        output = self.fc1(output)
+        return output
     
 model = NeuralNetwork().to(device)
 
-def train_loop(dataloader, model, loss_fn, optimizer):
-    size = len(dataloader.dataset)
+# Function to save the model
+def saveModel():
+    path = "./model_weights.pth"
+    torch.save(model.state_dict(), path)
 
-    model.train()
-    for batch, (images, labels) in enumerate(dataloader):
-        print(f"Batch {batch}: Image shape {images.shape}, Labels shape {labels.shape}")
-
-        optimizer.zero_grad()
-        pred = model(images)
-        loss = loss_fn(pred, labels)
-
-        loss.backward()
-        optimizer.step()
-
-        if batch % 10 == 0:
-            loss, current = loss.item(), batch * batch_size + len(images)
-            print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
-
-def test_loop(dataloader, model, loss_fn):
+def testaccuracy():
     model.eval()
-    size = len(dataloader.dataset)
-    num_batches = len(dataloader)
-    test_loss, correct = 0, 0
+
+    accuracy = 0.0
+    total = 0.0
     
     with torch.no_grad():
-        for X, y in dataloader:
-            pred = model(X)
-            test_loss += loss_fn(pred, y).item()
-            correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+        for data in test_loader:
+            images, labels = data
+            outputs = model(images.to(device))
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            accuracy += (predicted == labels.to(device)).sum().item()
 
-    test_loss /= num_batches
-    correct /= size
-    print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+    accuracy = (100 * accuracy / total)
+    return accuracy
 
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+def train():
+    model.train()
+
+    best_accuracy = 0.0
+
+    for epoch in range(epochs):
+        running_loss = 0.0
+        for batch, (images, labels) in enumerate(train_loader):
+            print(f"Batch {batch}: Image shape {images.shape}, Labels shape {labels.shape}")
+
+            optimizer.zero_grad()
+            pred = model(images)
+            loss = loss_fn(pred, labels)
+
+            loss.backward()
+            optimizer.step()
+
+            running_loss += loss.item()
+            if batch % 1000 == 999:
+                print('[%d, %5d] loss: %.3f' %
+                      (epoch + 1, batch + 1, running_loss / 1000))
+                running_loss = 0.0
+    
+        accuracy = testaccuracy()
+        print('For epoch', epoch+1,'the test accuracy over the whole test set is %d %%' % (accuracy))
+
+        if accuracy > best_accuracy:
+            saveModel()
+            best_accuracy = accuracy
+
+    print('Best accuracy', best_accuracy)
+
 model.to(device)
-for t in range(epochs):
-    print(f"Epoch {t+1}\n-------------------------------")
-    train_loop(train_loader, model, loss_fn, optimizer)
-    test_loop(test_loader, model, loss_fn)
+train()
 print("Done!")
 
 #torch.save(model.state_dict(), 'model_weights.pth')
 #model.load_state_dict(torch.load('model_weights.pth', weights_only=True))
+def run_model(image_path):
+    data = Image.open(image_path).convert("L")
+    plt.imshow(data)
+    plt.show()
+    data = data_transform(data)
+    data = data.unsqueeze(0)
+    data = data.to(device)
+    output = model(data)
+    prediction = torch.argmax(output)
+    print('File:', image_path, 'Classification:', class_labels[prediction.item()])
 
 model.eval()
 
-# data = Image.open('datasets/mp18test.png').convert("L")
-# plt.imshow(data)
-# plt.show()
-# data = data_transform(data)
-# output = model(data)
-# prediction = torch.argmax(output)
-# print(class_labels[prediction.item()])
+run_model('datasets/test/hatchet.png')
+run_model('datasets/test/smg08_small.png')
+run_model('datasets/train/artytruck_small.png')
+run_model('datasets/farq.png')
