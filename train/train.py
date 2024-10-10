@@ -46,7 +46,7 @@ class Bf1Icons(Dataset):
 train_dataset = Bf1Icons(csv_file='datasets/train/bf1iconstrain.csv', class_list=class_labels, transform=data_transform)
 test_dataset = Bf1Icons(csv_file='datasets/test/bf1iconstest.csv', class_list=class_labels, transform=data_transform)
 
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=6, shuffle=True)
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=32, shuffle=True)
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=6, shuffle=False)
 train_features, train_labels = next(iter(train_loader))
 
@@ -142,6 +142,7 @@ print("Done!")
 
 model.eval()
 
+'''
 data = Image.open('datasets/mp18test.png').convert("L")
 plt.imshow(data)
 plt.show()
@@ -149,3 +150,4 @@ data = data_transform(data)
 output = model(data)
 prediction = torch.argmax(output)
 print(class_labels[prediction.item()])
+'''
