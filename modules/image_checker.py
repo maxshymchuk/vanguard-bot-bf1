@@ -8,6 +8,7 @@ from PIL import Image
 from modules.image_enhancer import enhance_image
 from modules.screen_capture import capture_screen
 from modules.recognition import recognize_text, recognize_image
+from pynput.mouse import Controller, Button
 
 def player_name_area(isMaximized = False) -> tuple[int, int, int, int]:
     width = 0.15 * globals.current_window.width # 30% of window width
@@ -40,6 +41,7 @@ def save_log(screenshot, mask, players) -> None:
         f.write(' '.join(players))
 
 def check_image() -> None:
+    mouse = Controller()
     while not globals.threads_stop.is_set():
         with globals.threads_lock:
             if not globals.current_window:
@@ -59,9 +61,12 @@ def check_image() -> None:
                             print(f"Player {players[0]} using weapon {weapon}")
                             # UNCOMMENT BELOW TO SAVE SCREENSHOT FOR PLAYER NAMES AND WEAPON NAMES
                             #save_log(player_name_img, mask, players)
-                            save_log(player_weapon_img, None, weapon)
+                            #save_log(player_weapon_img, None, weapon)
                         # image_with_icon = capture_window(x, y, width, height)
                         # recognize_image(image_with_icon)
+                        mouse.position = (1260, 128)
+                        mouse.press(Button.left)
+                        mouse.release(Button.left)
                 except FileNotFoundError:
                     print('Image not found')
                 except Exception as e:
