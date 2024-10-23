@@ -9,9 +9,23 @@ from modules.image_enhancer import enhance_image
 from modules.screen_capture import capture_screen
 from modules.recognition import recognize_text, recognize_image
 
+def player_name_area(isMaximized = False) -> tuple[int, int, int, int]:
+    width = 0.15 * globals.current_window.width # 30% of window width
+    height = 0.03 * globals.current_window.height # 3% of window height
+    x = 0.695 * globals.current_window.width
+    y = 0.62 * globals.current_window.height
+    return x, y, width, height
+
+def player_weapon_area(isMaximized = False) -> tuple[int, int, int, int]:
+    width = 0.072 * globals.current_window.width # 30% of window width
+    height = 0.028 * globals.current_window.height # 3% of window height
+    x = 0.658 * globals.current_window.width
+    y = 0.76 * globals.current_window.height
+    return x, y, width, height
+
 def kill_feed_area(isMaximized = False) -> tuple[int, int, int, int]:
     width = 0.3 * globals.current_window.width # 30% of window width
-    height = 0.03 * globals.current_window.height # 3% of window height
+    height = 0.028 * globals.current_window.height # 3% of window height
     x = globals.current_window.left + globals.current_window.width - width
     y = globals.current_window.top + (10 if isMaximized else 40) # remove window title bar, maybe possible get right size from globals.current_window
     return x, y, width, height
@@ -36,11 +50,16 @@ def check_image() -> None:
                     if not active_window.title == globals.window_title:
                         print(f'Window ({globals.window_title}) must be active')
                     else:
-                        kill_feed = capture_screen(*kill_feed_area(active_window.isMaximized))
-                        image_with_text, mask = enhance_image(kill_feed)
+                        player_name_img = capture_screen(*player_name_area(active_window.isMaximized))
+                        image_with_text, mask = enhance_image(player_name_img)
                         players = recognize_text(image_with_text)
                         if len(players) > 0:
-                            save_log(kill_feed, mask, players)
+                            player_weapon_img = capture_screen(*player_weapon_area(active_window.isMaximized))
+                            weapon = recognize_text(player_weapon_img)
+                            print(f"Player {players[0]} using weapon {weapon}")
+                            # UNCOMMENT BELOW TO SAVE SCREENSHOT FOR PLAYER NAMES AND WEAPON NAMES
+                            #save_log(player_name_img, mask, players)
+                            save_log(player_weapon_img, None, weapon)
                         # image_with_icon = capture_window(x, y, width, height)
                         # recognize_image(image_with_icon)
                 except FileNotFoundError:
