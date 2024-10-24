@@ -1,6 +1,7 @@
 .vs
+.idea
 
-__pycache__
+__pycache__/
 
 tesseract/*
 !tesseract/README.md
@@ -10,3 +11,5 @@ models/*
 
 screenshots/*
 !screenshots/README.md
+
+test/

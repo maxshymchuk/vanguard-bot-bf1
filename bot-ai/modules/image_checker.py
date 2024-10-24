@@ -11,22 +11,22 @@ from modules.recognition import recognize_text, recognize_image
 from pynput.mouse import Controller, Button
 
 def player_name_area(isMaximized = False) -> tuple[int, int, int, int]:
-    width = 0.15 * globals.current_window.width # 30% of window width
-    height = 0.03 * globals.current_window.height # 3% of window height
+    width = 0.15 * globals.current_window.width
+    height = 0.03 * globals.current_window.height
     x = 0.695 * globals.current_window.width
     y = 0.62 * globals.current_window.height
     return x, y, width, height
 
 def player_weapon_area(isMaximized = False) -> tuple[int, int, int, int]:
-    width = 0.072 * globals.current_window.width # 30% of window width
-    height = 0.028 * globals.current_window.height # 3% of window height
+    width = 0.072 * globals.current_window.width
+    height = 0.028 * globals.current_window.height
     x = 0.658 * globals.current_window.width
     y = 0.76 * globals.current_window.height
     return x, y, width, height
 
 def kill_feed_area(isMaximized = False) -> tuple[int, int, int, int]:
-    width = 0.3 * globals.current_window.width # 30% of window width
-    height = 0.028 * globals.current_window.height # 3% of window height
+    width = 0.3 * globals.current_window.width
+    height = 0.028 * globals.current_window.height
     x = globals.current_window.left + globals.current_window.width - width
     y = globals.current_window.top + (10 if isMaximized else 40) # remove window title bar, maybe possible get right size from globals.current_window
     return x, y, width, height
