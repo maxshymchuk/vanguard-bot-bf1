@@ -3,8 +3,8 @@ import threading
 import globals
 import signal
 import pytesseract
-from modules.image_checker import check_image
-from modules.window_scanner import scan_window
+from modules.image_checker import check_image_thread
+from modules.window_scanner import scan_window_thread
 
 pytesseract.pytesseract.tesseract_cmd = './tesseract/tesseract.exe'
 
@@ -15,8 +15,8 @@ def handle_signal(signum, frame):
 
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, handle_signal)
-    thread1 = threading.Thread(target=scan_window)
-    thread2 = threading.Thread(target=check_image)
+    thread1 = threading.Thread(target=scan_window_thread)
+    thread2 = threading.Thread(target=check_image_thread)
     thread1.start()
     thread2.start()
     try:

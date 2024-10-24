@@ -1,19 +1,17 @@
 import pytesseract
 import numpy as np
-from modules.utils import replace_wrong_symbols, remove_restricted_symbols
-from modules.utils import available_symbols
+from modules.utils import replace_wrong_symbols, remove_restricted_symbols, common_symbols
 # from tensorflow.keras.models import load_model
 
 # we need to train the model for weapon icons
 # model = load_model('image_recognition_model.h5')
 
-def recognize_text(image) -> list:
-    text = pytesseract.image_to_string(image, lang = 'eng', config = f'--psm 7 --oem 3 -c tessedit_char_whitelist={available_symbols}')
-    words = text.strip().split(' ') # string cleanup and split to array
-    words = map(replace_wrong_symbols, words) # replace error combinations, must be before removing restricted symbols
-    words = map(remove_restricted_symbols, words) # allow only available symbols
-    words = filter(None, words) # filter out empty strings
-    return list(words) or []
+def recognize_text(image, available_symbols: str | None = common_symbols) -> str:
+    text: str = pytesseract.image_to_string(image, lang = 'eng', config = f'--psm 7 --oem 3 -c tessedit_char_whitelist={available_symbols}') 
+    words = text.strip() # string cleanup
+    words = replace_wrong_symbols(words) # replace error combinations, must be before removing restricted symbols
+    words = remove_restricted_symbols(words, available_symbols) # allow only available symbols
+    return words or None
 
 def recognize_image(image):
     img = image.resize((32, 32))
