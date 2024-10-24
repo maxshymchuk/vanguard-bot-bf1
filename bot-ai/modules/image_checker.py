@@ -5,10 +5,13 @@ import os
 import math
 import pygetwindow as gw
 from PIL import Image
-from modules.image_enhancer import enhance_image
+from modules.image_enhancer import enhance_image, enhance_weapon_image
 from modules.screen_capture import capture_screen
 from modules.recognition import recognize_text, recognize_image
 from pynput.mouse import Controller, Button
+from difflib import SequenceMatcher
+
+# TODO: Other weapons/vehicle detection, include isMaximized in area calculation
 
 def player_name_area(isMaximized = False) -> tuple[int, int, int, int]:
     width = 0.15 * globals.current_window.width
@@ -42,6 +45,7 @@ def save_log(screenshot, mask, players) -> None:
 
 def check_image() -> None:
     mouse = Controller()
+    smg_text = "SMG 08I8 Factory"
     while not globals.threads_stop.is_set():
         with globals.threads_lock:
             if not globals.current_window:
@@ -57,14 +61,25 @@ def check_image() -> None:
                         players = recognize_text(image_with_text)
                         if len(players) > 0:
                             player_weapon_img = capture_screen(*player_weapon_area(active_window.isMaximized))
-                            weapon = recognize_text(player_weapon_img)
-                            print(f"Player {players[0]} using weapon {weapon}")
-                            # UNCOMMENT BELOW TO SAVE SCREENSHOT FOR PLAYER NAMES AND WEAPON NAMES
+                            enhanced_weapon_image, weapon_mask = enhance_weapon_image(player_weapon_img)
+                            weapon_text = recognize_text(enhanced_weapon_image)
+
                             #save_log(player_name_img, mask, players)
-                            #save_log(player_weapon_img, None, weapon)
-                        # image_with_icon = capture_window(x, y, width, height)
-                        # recognize_image(image_with_icon)
-                        mouse.position = (1260, 128)
+
+                            # this is kinda inefficient because we can write a new recognize_text to return a string and not a list but its fine for now
+                            separator = ' ' 
+                            weapon_string = separator.join(weapon_text) 
+
+                            print(f"Player {players[0]} using weapon {weapon_string}")
+
+                            probability = SequenceMatcher(None, weapon_string, smg_text).ratio()
+                            # 0.9 probability is arbitrary right now
+                            if(probability > 0.9):
+                                print(f"Kick Player {players[0]} for using SMG08! Probability {probability}")
+                                save_log(player_weapon_img, weapon_mask, weapon_text)
+
+                        # go to next player
+                        mouse.position = (globals.current_window.width * 0.65625, globals.current_window.height * 0.1185)
                         mouse.press(Button.left)
                         mouse.release(Button.left)
                 except FileNotFoundError:

@@ -36,3 +36,24 @@ def enhance_image(image, target_height = 100):
     # cv.imshow('output', result)
 
     return result, mask
+
+def enhance_weapon_image(image, target_height = 100):
+    image_array = np.array(image)
+
+    height, width = image_array.shape[:2]
+    ratio = target_height / height
+    image_array = cv.resize(image_array, (math.trunc(ratio * width), math.trunc(ratio * height)), interpolation = cv.INTER_CUBIC)
+
+    image_hsv = cv.cvtColor(image_array, cv.COLOR_RGB2GRAY)
+
+    maskimg = cv.imread('modules/weaponmask.png')
+
+    maskimg = cv.resize(maskimg, (math.trunc(ratio * width), math.trunc(ratio * height)), interpolation = cv.INTER_CUBIC)
+
+    mask = cv.cvtColor(maskimg, cv.COLOR_RGB2GRAY)
+
+    greycolourmask = cv.inRange(image_hsv, 0, 120)
+    mask = cv.bitwise_and(mask, greycolourmask)
+    result = cv.bitwise_and(image_hsv, image_hsv, mask = mask)
+
+    return result, mask
