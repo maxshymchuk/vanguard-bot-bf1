@@ -29,7 +29,7 @@ def get_auth_code() -> ResponseAuth:
     respAuth = ResponseAuth()
     try:
         response = requests.get(globals.host, headers=headers, allow_redirects=False)
-
+    
         if response.status_code == 302:
             location = str(response.headers['location'])
             if '127.0.0.1/success?code=' in location:

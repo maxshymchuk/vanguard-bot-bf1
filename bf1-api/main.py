@@ -1,5 +1,5 @@
 from modules.ea import get_access_token, get_session_id_via_authcode, get_auth_code
-from modules.gameserver import get_servers_by_persona_ids, search_server, get_player_persona_by_id, get_full_server_details
+from modules.gameserver import get_servers_by_persona_ids, search_server, get_player_persona_by_id, get_full_server_details, get_teams
 from modules.rsp import get_personas_by_ids, kick_player
 import globals
 
@@ -59,28 +59,22 @@ if __name__ == '__main__':
         print('No server found called ' + servername)
         quit()
 
-    # success, playerlist = get_playerlist(gameID)
-    # if not success:
-    #     print_error_message('Failed to get player list for server ' + servername, playerlist)
-    #     #quit()
-
-    # #print(playerlist)
-
-    # success, teams = get_teams(gameID)
-    # if not success:
-    #     print_error_message('Failed to get teams for server ' + servername, teams)
-    #     quit()
-
-    # print(teams)
-
-    success, details = get_full_server_details(gameID)
+    success, team1, team2 = get_teams(gameID)
     if not success:
-        print_error_message('Failed to get server details for id ' + gameID, details)
+        print('Failed to get teams for server ' + servername)
         quit()
 
-    # details['result']['rspInfo']
+    print(team1)
+    print(team2)
 
-    print(details)
+    # success, details = get_full_server_details(gameID)
+    # if not success:
+    #     print_error_message('Failed to get server details for id ' + gameID, details)
+    #     quit()
+
+    # print(details)
+
+    # details['result']['rspInfo']
 
     # success, content = kick_player(globals.sessionID, gameID, personaID, 'Twat')
 
