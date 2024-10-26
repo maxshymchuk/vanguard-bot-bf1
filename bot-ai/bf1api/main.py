@@ -40,7 +40,7 @@ def init_api(verbose_errors):
 
     return True
 
-def get_server_id(servername: str):
+def get_server_id_and_fullname(servername: str):
     success, serverinfo = search_server(servername)
     if not success:
         print_error_message('Failed to get server' + servername, serverinfo)
@@ -48,12 +48,12 @@ def get_server_id(servername: str):
 
     if len(serverinfo['result']['gameservers']) > 0:
         gameID = serverinfo['result']['gameservers'][0]['gameId']
+        fullServerName = serverinfo['result']['gameservers'][0]['name']
     else:
         print('No server found called ' + servername)
-        return False, ''
+        return False, '', ''
     
-    return True, gameID
-
+    return True, gameID, fullServerName
 
 if __name__ == '__main__':
 

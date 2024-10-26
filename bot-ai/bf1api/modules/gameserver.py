@@ -39,14 +39,21 @@ def get_servers_by_persona_ids(personaID):
 def get_players(gameID) -> dict:
     try:
         params = {'gameID': gameID}
-        teams = dict()
+
         response = requests.get(apiglobals.gametools, params=params)
         if response.status_code == 200:
             parsed_content = json.loads(response.content)
+
+            teams = dict()
             team1 = parsed_content['teams'][0]['players']
-            teams.update([(player['name'], player['player_id']) for player in team1])
             team2 = parsed_content['teams'][1]['players']
-            teams.update([(player['name'], player['player_id']) for player in team2])
+            team1.extend(team2)
+            for player in team1:
+                # We also need to append the platoon tag because it shows up in third person view
+                if player['platoon']:
+                    teams['[' + player['platoon'] + ']' + player['name']] = player['player_id']
+                else:
+                    teams[player['name']] =  player['player_id']
             return True, teams
     except Exception as e:
         print('Failed to get playerlist for game ID ' + gameID + ' error: ' + str(e))

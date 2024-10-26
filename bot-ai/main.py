@@ -6,7 +6,7 @@ import pytesseract
 from modules.image_checker import check_image_thread
 from modules.window_scanner import scan_window_thread
 from modules.bf1api_integration import _search_for_and_kick_player
-from bf1api.main import init_api, get_server_id
+from bf1api.main import init_api, get_server_id_and_fullname
 
 pytesseract.pytesseract.tesseract_cmd = './tesseract/tesseract.exe'
 
@@ -20,10 +20,13 @@ if __name__ == '__main__':
     if not init_api(True):
         raise Exception('Failed to init API')
     
-    success, globals.gameID = get_server_id('![VG]Vanguard')
+    servername = '![VG]Vanguard'
+    success, globals.gameID, fullservername = get_server_id_and_fullname(servername)
 
     if not success:
         raise Exception('Failed to get server')
+    else:
+        print('Successfully found server ' + fullservername)
     
     # #teams = {'02adfedfghikg' : '1'}
     # if not _search_for_and_kick_player('02adfedfgh1kg', 'twat', teams):

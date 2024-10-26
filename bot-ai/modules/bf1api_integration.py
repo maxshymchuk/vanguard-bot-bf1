@@ -33,7 +33,9 @@ def _search_for_and_kick_player(playerName: str, reason: str, teams) -> bool:
     print('For player ' + playerName + ' best probability is ' + str(highestProbability) + ' for possible name ' + mostLikelyName)
     if highestProbability > globals.playerNameSimilarityProbability:
         print('Attempted kick player ' + playerName + ' is likely to have name ' + mostLikelyName + ' with probability ' + str(highestProbability))
-        return _kick(playerName, reason, teams[mostLikelyName])
+
+        if mostLikelyName in teams.keys():
+            return _kick(playerName, reason, teams[mostLikelyName])
     
     return False
 
@@ -41,6 +43,8 @@ def find_and_kick_player(playerName: str, reason: str) -> bool:
 
     if _search_for_and_kick_player(playerName, reason, find_and_kick_player.teams):
         return True
+    
+    print('Getting player list again')
     
     # Worst case we have to get the player list again and search
     success, find_and_kick_player.teams = get_players(globals.gameID)
@@ -54,7 +58,7 @@ def find_and_kick_player(playerName: str, reason: str) -> bool:
         return True
 
     # Give up :(
-    print('Giving up kicking player ' + playerName + 'could not find him in teams')
+    print('Giving up kicking player ' + playerName + ' could not find him in teams')
     return False
 
 find_and_kick_player.teams = dict() # Playername : PersonaID dict

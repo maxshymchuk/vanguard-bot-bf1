@@ -16,6 +16,8 @@ from modules.bf1api_integration import find_and_kick_player
 # TODO: Other weapons/vehicle detection, include isMaximized in area calculation
 
 def next_player_button_position() -> tuple[int, int]:
+    #x = globals.current_window.width * 0.65625
+    #y = globals.current_window.height * 0.1185
     x = globals.current_window.left + 0.65625 * globals.current_window.width
     y = globals.current_window.top + 0.1185 * globals.current_window.height
     return x, y
@@ -23,6 +25,8 @@ def next_player_button_position() -> tuple[int, int]:
 def player_name_area(isMaximized = False) -> tuple[int, int, int, int]:
     width = 0.15 * globals.current_window.width
     height = 0.03 * globals.current_window.height
+    # x = 0.695 * globals.current_window.width
+    # y = 0.62 * globals.current_window.height
     x = globals.current_window.left + 0.695 * globals.current_window.width
     y = globals.current_window.top + 0.62 * globals.current_window.height
     return x, y, width, height
@@ -30,6 +34,8 @@ def player_name_area(isMaximized = False) -> tuple[int, int, int, int]:
 def player_weapon_area(isMaximized = False) -> tuple[int, int, int, int]:
     width = 0.072 * globals.current_window.width
     height = 0.028 * globals.current_window.height
+    # x = 0.658 * globals.current_window.width
+    # y = 0.76 * globals.current_window.height
     x = globals.current_window.left + 0.658 * globals.current_window.width
     y = globals.current_window.top + 0.76 * globals.current_window.height
     return x, y, width, height
@@ -47,11 +53,27 @@ def save_log(screenshot, mask, players) -> None:
     os.makedirs(path)
     Image.fromarray(mask).save(f'{path}/mask.png')
     screenshot.save(f'{path}/screenshot.png')
-    with open(f'{path}/text.txt', 'w') as f:
-        f.write(players)
+    if players:
+        with open(f'{path}/text.txt', 'w') as f:
+            f.write(players)
+
+def save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon):
+    postfix = f'{math.trunc(time.time())}'
+    path = f'{globals.screenshots_path}/screenshot-{postfix}'
+    os.makedirs(path)
+    Image.fromarray(player_mask).save(f'{path}/player_mask.png')
+    Image.fromarray(weapon_mask).save(f'{path}/weapon_mask.png')
+    player_name_img.save(f'{path}/player_name.png')
+    weapon_img.save(f'{path}/weapon.png')
+    if player or weapon:
+        with open(f'{path}/text.txt', 'w') as f:
+            if player:
+                f.write(player)
+            if weapon:
+                f.write('\n' + weapon)
+
 
 mouse = Controller()
-smg_text = "SMG 08I8 Factory"
 
 def check_image(active_window) -> None:
     player_name_img = capture_screen(*player_name_area(active_window.isMaximized))
@@ -62,16 +84,15 @@ def check_image(active_window) -> None:
     enhanced_weapon_image, weapon_mask = enhance_weapon_image(player_weapon_img)
     weapon = recognize_text(enhanced_weapon_image, available_weapon_symbols)
 
-    # save_log(player_name_img, player_mask, player)
-
     if player and weapon:
         print(f"Player {player} using weapon {weapon}")
 
-        for banned_weapon in globals.banned_weapons:
+        for banned_weapon in globals.banned_weapons.keys():
             probability = get_string_similarity(weapon, banned_weapon)
             if probability >= globals.weaponTextSimilarityProbability:
-                print(f"Kick Player {player} for using SMG08! Probability {probability}")
-                find_and_kick_player(player)
+                print(f"Kick Player {player} for using {globals.banned_weapons[banned_weapon]}! Probability {probability}")
+                save_weapon_and_player(player_name_img, player_mask, player, player_weapon_img, weapon_mask, weapon)
+                find_and_kick_player(player, f'No {globals.banned_weapons[banned_weapon]}, Read Rules')
                 break
 
     # go to next player
