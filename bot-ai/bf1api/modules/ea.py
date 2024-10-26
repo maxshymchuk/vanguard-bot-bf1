@@ -1,7 +1,7 @@
 import requests
 import json
 import bf1api.apiglobals as apiglobals
-from bf1api.modules.common import rsp_request
+from bf1api.modules.common import rpc_request
 
 class ResponseAuth:
     def __init__(self) -> None:
@@ -50,7 +50,7 @@ def get_auth_code() -> ResponseAuth:
     return respAuth
 
 def get_session_id_via_authcode(authCode: str) -> tuple[bool, str | object, str | None]:
-    jsonBody = rsp_request('Authentication.getEnvIdViaAuthCode', {
+    jsonBody = rpc_request('Authentication.getEnvIdViaAuthCode', {
         'authCode': authCode,
         'locale:': 'en-GB'
     })

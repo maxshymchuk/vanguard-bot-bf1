@@ -1,7 +1,7 @@
 import json
 import requests
 import bf1api.apiglobals as apiglobals
-from bf1api.modules.common import rsp_headers, rsp_request
+from bf1api.modules.common import rpc_headers, rpc_request
 
 def get_player_persona_by_id(player_name: str) -> tuple[bool, str | object]:
     headers = {'X-Expand-Results': str(True), 'Authorization': f'Bearer {apiglobals.access_token}'}
@@ -15,12 +15,12 @@ def get_player_persona_by_id(player_name: str) -> tuple[bool, str | object]:
     return False, json.loads(response.content)
 
 def get_servers_by_persona_ids(personaID: str) -> tuple[bool, object]:
-    jsonBody = rsp_request('GameServer.getServersByPersonaIds', {
+    jsonBody = rpc_request('GameServer.getServersByPersonaIds', {
         'game': 'tunguska',
         'personaIds': [personaID]
     })
     try:
-        response = requests.post(apiglobals.bf1host, headers=rsp_headers(), json=jsonBody)
+        response = requests.post(apiglobals.bf1host, headers=rpc_headers(), json=jsonBody)
         if response.status_code == 200:
             return True, json.loads(response.content)
     except Exception as e:
@@ -52,14 +52,14 @@ def get_players(gameID: str) -> tuple[bool, dict]:
 
 
 def search_server(serverName: str) -> tuple[bool, object]:
-    jsonBody = rsp_request('GameServer.searchServers', {
+    jsonBody = rpc_request('GameServer.searchServers', {
         'filterJson': "{\"version\":6,\"name\":\"" + serverName + "\"}",
         'game': 'tunguska',
         'limit': '30',
         'protocolVersion': '3779779'
     })
     try:
-        response = requests.post(apiglobals.bf1host, headers=rsp_headers(), json=jsonBody)
+        response = requests.post(apiglobals.bf1host, headers=rpc_headers(), json=jsonBody)
         if response.status_code == 200:
             return True, json.loads(response.content)
     except Exception as e:
@@ -68,12 +68,12 @@ def search_server(serverName: str) -> tuple[bool, object]:
     return False, json.loads(response.content)
 
 def get_full_server_details(gameID: str) -> tuple[bool, object]:
-    jsonBody = rsp_request('GameServer.getFullServerDetails', {
+    jsonBody = rpc_request('GameServer.getFullServerDetails', {
         'game': 'tunguska',
         'gameId': gameID
     })
     try:
-        response = requests.post(apiglobals.bf1host, headers=rsp_headers(), json=jsonBody)
+        response = requests.post(apiglobals.bf1host, headers=rpc_headers(), json=jsonBody)
         if response.status_code == 200:
             return True, json.loads(response.content)
     except Exception as e:

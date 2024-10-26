@@ -1,16 +1,16 @@
 import json
 import requests
 import bf1api.apiglobals as apiglobals
-from bf1api.modules.common import rsp_headers, rsp_request
+from bf1api.modules.common import rpc_headers, rpc_request
 
 def get_persona_by_id(personaID: str) -> tuple[bool, str | object]:
     content = ''
-    jsonBody = rsp_request('RSP.getPersonasByIds', {
+    jsonBody = rpc_request('RSP.getPersonasByIds', {
         'game': 'tunguska',
         'personaIds': [personaID]
     })
     try:
-        response = requests.post(apiglobals.bf1host, headers=rsp_headers(), json=jsonBody)
+        response = requests.post(apiglobals.bf1host, headers=rpc_headers(), json=jsonBody)
         content = json.loads(response.content)
         if response.status_code == 200:
             return True, content['result'][personaID]['displayName']
@@ -20,14 +20,14 @@ def get_persona_by_id(personaID: str) -> tuple[bool, str | object]:
     return False, content
 
 def kick_player(gameID: str, personaID: str, reason: str) -> tuple[bool, object]:
-    jsonBody = rsp_request('RSP.kickPlayer', {
+    jsonBody = rpc_request('RSP.kickPlayer', {
         'game': 'tunguska',
         'gameId': gameID,
         'personaId': personaID,
         'reason': reason
     })
     try:
-        response = requests.post(apiglobals.bf1host, headers=rsp_headers(), json=jsonBody)
+        response = requests.post(apiglobals.bf1host, headers=rpc_headers(), json=jsonBody)
         if response.status_code == 200:
             return True, json.loads(response.content)
     except Exception as e:
