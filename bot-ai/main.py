@@ -25,12 +25,12 @@ if __name__ == '__main__':
     if not success:
         raise Exception('Failed to get server')
     
-    teams = {'02adfedfghikg' : '1'}
-    if not _search_for_and_kick_player('02adfedfgh1kg', 'twat', teams):
-        print('Failed to kick player')
+    # #teams = {'02adfedfghikg' : '1'}
+    # if not _search_for_and_kick_player('02adfedfgh1kg', 'twat', teams):
+    #     print('Failed to kick player')
 
-    input('enter')
-    quit()
+    # input('enter')
+    # quit()
         
     signal.signal(signal.SIGINT, handle_signal)
     thread1 = threading.Thread(target=scan_window_thread)
