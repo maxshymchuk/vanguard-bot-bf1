@@ -10,7 +10,8 @@ from modules.screen_capture import capture_screen
 from modules.recognition import recognize_text, recognize_image
 from pynput.mouse import Controller, Button
 from difflib import SequenceMatcher
-from modules.utils import available_nickname_symbols, available_weapon_symbols
+from modules.utils import available_nickname_symbols, available_weapon_symbols, get_string_similarity
+from modules.bf1api_integration import find_and_kick_player
 
 # TODO: Other weapons/vehicle detection, include isMaximized in area calculation
 
@@ -65,10 +66,13 @@ def check_image(active_window) -> None:
 
     if player and weapon:
         print(f"Player {player} using weapon {weapon}")
-        probability = SequenceMatcher(None, weapon, smg_text).ratio()
-        if (probability >= globals.probability):
-            print(f"Kick Player {player} for using SMG08! Probability {probability}")
-            save_log(player_weapon_img, weapon_mask, weapon)
+
+        for banned_weapon in globals.banned_weapons:
+            probability = get_string_similarity(weapon, banned_weapon)
+            if probability >= globals.weaponTextSimilarityProbability:
+                print(f"Kick Player {player} for using SMG08! Probability {probability}")
+                find_and_kick_player(player)
+                break
 
     # go to next player
     mouse.position = next_player_button_position()

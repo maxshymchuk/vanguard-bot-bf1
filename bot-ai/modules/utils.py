@@ -1,3 +1,5 @@
+from difflib import SequenceMatcher
+
 common_symbols = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 
 available_nickname_symbols = f'{common_symbols}-_'
@@ -22,3 +24,6 @@ def remove_restricted_symbols(str: str, available_symbols: str | None) -> str:
         if not letter in available_symbols:
             str = str.replace(letter, '')
     return str
+
+def get_string_similarity(str1: str, str2: str) -> float:
+    return SequenceMatcher(None, str1, str2).ratio()

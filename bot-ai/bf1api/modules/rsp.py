@@ -1,28 +1,10 @@
 import json
 import requests
-import globals
+import bf1api.apiglobals as apiglobals
 import uuid
 
-# def get_teams(gameID, method):
-#     try:
-#         jsonBody = {'jsonrpc': '2.0',
-#                 'method':'RSP.getPersonaIdsBySlots',
-#                 'params': {
-#                     'game': 'tunguska',
-#                     'gameId': gameID,
-#                 },
-#                 'id': str(uuid.uuid4())}
-#         headers = {'X-GatewaySession': globals.sessionID}
-
-#         response = requests.post(globals.bf1host, headers=headers, json=jsonBody)
-#         if response.status_code == 200:
-#             return True, json.loads(response.content)
-#     except Exception as e:
-#         print('Error getting teams' + str(e))
-
-#     return False, json.loads(response.content)
-
 def get_personas_by_ids(personaID):
+    content = ''
     try:
         jsonBody = {'jsonrpc': '2.0',
                     'method':'RSP.getPersonasByIds',
@@ -32,14 +14,15 @@ def get_personas_by_ids(personaID):
                     },
                     'id': str(uuid.uuid4())}
         
-        headers = {'X-GatewaySession': globals.sessionID}
-        response = requests.post(globals.bf1host, headers=headers, json=jsonBody)
+        headers = {'X-GatewaySession': apiglobals.sessionID}
+        response = requests.post(apiglobals.bf1host, headers=headers, json=jsonBody)
+        content = json.loads(response.content)
         if response.status_code == 200:
-            return True, json.loads(response.content)['result'][personaID]['displayName']
+            return True, content['result'][personaID]['displayName']
     except Exception as e:
         print("Error getting persona by id " + str(e))
 
-    return False, json.loads(response.content)
+    return False, content
 
 def kick_player(gameID, personaID, reason):
     try:
@@ -52,9 +35,9 @@ def kick_player(gameID, personaID, reason):
                     'reason': reason
                 },
                 'id': str(uuid.uuid4())}
-        headers = {'X-GatewaySession': globals.sessionID}
+        headers = {'X-GatewaySession': apiglobals.sessionID}
 
-        response = requests.post(globals.bf1host, headers=headers, json=jsonBody)
+        response = requests.post(apiglobals.bf1host, headers=headers, json=jsonBody)
         if response.status_code == 200:
             return True, json.loads(response.content)
     except Exception as e:

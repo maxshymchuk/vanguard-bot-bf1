@@ -5,6 +5,8 @@ import signal
 import pytesseract
 from modules.image_checker import check_image_thread
 from modules.window_scanner import scan_window_thread
+from modules.bf1api_integration import _search_for_and_kick_player
+from bf1api.main import init_api, get_server_id
 
 pytesseract.pytesseract.tesseract_cmd = './tesseract/tesseract.exe'
 
@@ -14,6 +16,22 @@ def handle_signal(signum, frame):
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 if __name__ == '__main__':
+
+    if not init_api(True):
+        raise Exception('Failed to init API')
+    
+    success, globals.gameID = get_server_id('![VG]Vanguard')
+
+    if not success:
+        raise Exception('Failed to get server')
+    
+    teams = {'02adfedfghikg' : '1'}
+    if not _search_for_and_kick_player('02adfedfgh1kg', 'twat', teams):
+        print('Failed to kick player')
+
+    input('enter')
+    quit()
+        
     signal.signal(signal.SIGINT, handle_signal)
     thread1 = threading.Thread(target=scan_window_thread)
     thread2 = threading.Thread(target=check_image_thread)
@@ -27,4 +45,5 @@ if __name__ == '__main__':
     except Exception as e:
         print(f'Unexpected error: {e}')
     finally:
+        input("press a key")
         print('Program terminated')

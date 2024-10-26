@@ -1,5 +1,5 @@
 import requests
-import globals
+import bf1api.apiglobals as apiglobals
 import uuid
 import json
 
@@ -12,23 +12,25 @@ class ResponseAuth:
         self.content = ''
 
 def get_access_token():
+    content = ''
     try:
-        headers = {'Cookie': f"remid={globals.remid};sid={globals.sid};"}
-        response = requests.get(globals.host1, headers=headers)
+        headers = {'Cookie': f"remid={apiglobals.remid2};sid={apiglobals.sid2};"}
+        response = requests.get(apiglobals.host1, headers=headers)
+        content = json.loads(response.content)
 
         if response.status_code == 200:
-            return True, json.loads(response.content)["access_token"]
+            return True, content["access_token"]
     
     except Exception as e:
         print("Error in access token request " + str(e))
 
-    return False, json.loads(response.content)
+    return False, content
 
 def get_auth_code() -> ResponseAuth:
-    headers = {'Cookie': f"remid={globals.remid};sid={globals.sid};"}
+    headers = {'Cookie': f"remid={apiglobals.remid2};sid={apiglobals.sid2};"}
     respAuth = ResponseAuth()
     try:
-        response = requests.get(globals.host, headers=headers, allow_redirects=False)
+        response = requests.get(apiglobals.host, headers=headers, allow_redirects=False)
     
         if response.status_code == 302:
             location = str(response.headers['location'])
@@ -60,12 +62,13 @@ def get_session_id_via_authcode(authCode: str):
                     },
                     'id': str(uuid.uuid4())}
         
-        response = requests.post(globals.bf1host, json=jsonBody)
+        response = requests.post(apiglobals.bf1host, json=jsonBody)
 
         if response.status_code == 200:
-            return True, json.loads(response.content)['result']['sessionId']
+            jsonContent = json.loads(response.content)
+            return True, jsonContent['result']['sessionId'], jsonContent['result']['personaId']
 
     except Exception as e:
         print("Error in getting session id from auth code " + str(e))
 
-    return False, json.loads(response.content)
+    return False, json.loads(response.content), ''
