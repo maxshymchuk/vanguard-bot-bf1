@@ -5,7 +5,7 @@ common_symbols = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
 available_nickname_symbols = f'{common_symbols}-_[]'
 available_weapon_symbols = f'{common_symbols}-/'
 
-# add any error combination tesseract find to fix a word (use only restricted symbols as keys)
+# add any error combination tesseract find to fix a word
 replaceable = {
     '|': 'I',
     '€': 'e',

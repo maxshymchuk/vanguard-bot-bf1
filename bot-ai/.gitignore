@@ -1,8 +1,3 @@
-.vs
-.idea
-
-__pycache__/
-
 tesseract/*
 !tesseract/README.md
 

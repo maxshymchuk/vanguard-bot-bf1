@@ -1,34 +1,26 @@
 import json
 import requests
 import bf1api.apiglobals as apiglobals
-import uuid
+from bf1api.modules.common import rsp_headers, rsp_request
 
-def get_player_persona_by_id(player_name: str) :
-    headers = {'X-Expand-Results': str(True), 
-               'Authorization': f'Bearer {apiglobals.access_token}'}
+def get_player_persona_by_id(player_name: str) -> tuple[bool, str | object]:
+    headers = {'X-Expand-Results': str(True), 'Authorization': f'Bearer {apiglobals.access_token}'}
     try:
         response = requests.get(f'{apiglobals.host2}{player_name}', headers=headers)
-
         if response.status_code == 200:
             return True, json.loads(response.content)['personas']['persona'][0]['personaId']
-
     except Exception as e:
         print("Error in get player persona by id request " + str(e))
     
     return False, json.loads(response.content)
 
-def get_servers_by_persona_ids(personaID):
+def get_servers_by_persona_ids(personaID: str) -> tuple[bool, object]:
+    jsonBody = rsp_request('GameServer.getServersByPersonaIds', {
+        'game': 'tunguska',
+        'personaIds': [personaID]
+    })
     try:
-        jsonBody = {'jsonrpc': '2.0',
-                'method':'GameServer.getServersByPersonaIds',
-                'params': {
-                    'game': 'tunguska',
-                    'personaIds': [personaID]
-                },
-                'id': str(uuid.uuid4())}
-        headers = {'X-GatewaySession': apiglobals.sessionID}
-
-        response = requests.post(apiglobals.bf1host, headers=headers, json=jsonBody)
+        response = requests.post(apiglobals.bf1host, headers=rsp_headers(), json=jsonBody)
         if response.status_code == 200:
             return True, json.loads(response.content)
     except Exception as e:
@@ -36,15 +28,13 @@ def get_servers_by_persona_ids(personaID):
 
     return False, json.loads(response.content)
 
-def get_players(gameID) -> dict:
+def get_players(gameID: str) -> tuple[bool, dict]:
+    params = {'gameID': gameID}
+    teams = dict()
     try:
-        params = {'gameID': gameID}
-        teams = dict()
-
         response = requests.get(apiglobals.gametools, params=params)
         if response.status_code == 200:
             parsed_content = json.loads(response.content)
-
             team1 = parsed_content['teams'][0]['players']
             team2 = parsed_content['teams'][1]['players']
             team1.extend(team2)
@@ -61,20 +51,15 @@ def get_players(gameID) -> dict:
     return False, dict()
 
 
-def search_server(serverName):
+def search_server(serverName: str) -> tuple[bool, object]:
+    jsonBody = rsp_request('GameServer.searchServers', {
+        'filterJson': "{\"version\":6,\"name\":\"" + serverName + "\"}",
+        'game': 'tunguska',
+        'limit': '30',
+        'protocolVersion': '3779779'
+    })
     try:
-        jsonBody = {'jsonrpc': '2.0',
-                'method':'GameServer.searchServers',
-                'params': {
-                    'filterJson': "{\"version\":6,\"name\":\"" + serverName + "\"}",
-                    'game': 'tunguska',
-                    'limit': '30',
-                    'protocolVersion': '3779779'
-                },
-                'id': str(uuid.uuid4())}
-        headers = {'X-GatewaySession': apiglobals.sessionID}
-
-        response = requests.post(apiglobals.bf1host, headers=headers, json=jsonBody)
+        response = requests.post(apiglobals.bf1host, headers=rsp_headers(), json=jsonBody)
         if response.status_code == 200:
             return True, json.loads(response.content)
     except Exception as e:
@@ -82,18 +67,13 @@ def search_server(serverName):
 
     return False, json.loads(response.content)
 
-def get_full_server_details(gameID):
+def get_full_server_details(gameID: str) -> tuple[bool, object]:
+    jsonBody = rsp_request('GameServer.getFullServerDetails', {
+        'game': 'tunguska',
+        'gameId': gameID
+    })
     try:
-        jsonBody = {'jsonrpc': '2.0',
-                'method':'GameServer.getFullServerDetails',
-                'params': {
-                    'game': 'tunguska',
-                    'gameId': gameID
-                },
-                'id': str(uuid.uuid4())}
-        headers = {'X-GatewaySession': apiglobals.sessionID}
-
-        response = requests.post(apiglobals.bf1host, headers=headers, json=jsonBody)
+        response = requests.post(apiglobals.bf1host, headers=rsp_headers(), json=jsonBody)
         if response.status_code == 200:
             return True, json.loads(response.content)
     except Exception as e:

@@ -3,12 +3,12 @@ from bf1api.modules.gameserver import get_servers_by_persona_ids, search_server,
 from bf1api.modules.rsp import get_personas_by_ids, kick_player
 import bf1api.apiglobals as apiglobals
 
-def print_error_message(msg, content):
+def print_error_message(msg: str, content) -> None:
     print(msg)
     if apiglobals.verbose_errors:
         print('API called returned: ' + str(content))
 
-def init_api(verbose_errors):
+def init_api(verbose_errors: bool) -> bool:
     apiglobals.verbose_errors = verbose_errors
     success, apiglobals.access_token = get_access_token()
     if not success:
@@ -35,16 +35,17 @@ def init_api(verbose_errors):
     success, name = get_personas_by_ids(apiglobals.myPersonaId)
     if not success:
         print('Failed to get persona for id ' + apiglobals.myPersonaId)
-        quit()
+        return False
+    
     print('You are ' + name)
 
     return True
 
-def get_server_id_and_fullname(servername: str):
+def get_server_id_and_fullname(servername: str) -> tuple[bool, str, str]:
     success, serverinfo = search_server(servername)
     if not success:
         print_error_message('Failed to get server' + servername, serverinfo)
-        return False, ''
+        return False, '', ''
 
     if len(serverinfo['result']['gameservers']) > 0:
         gameID = serverinfo['result']['gameservers'][0]['gameId']
