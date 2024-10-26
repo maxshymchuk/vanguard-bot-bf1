@@ -3,7 +3,7 @@ import requests
 import bf1api.apiglobals as apiglobals
 from bf1api.modules.common import rsp_headers, rsp_request
 
-def get_personas_by_ids(personaID: str) -> tuple[bool, str | object]:
+def get_persona_by_id(personaID: str) -> tuple[bool, str | object]:
     content = ''
     jsonBody = rsp_request('RSP.getPersonasByIds', {
         'game': 'tunguska',

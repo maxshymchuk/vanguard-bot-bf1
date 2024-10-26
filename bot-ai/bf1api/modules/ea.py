@@ -14,8 +14,7 @@ class ResponseAuth:
 def get_headers() -> dict[str, str]:
     return {'Cookie': f"remid={apiglobals.remid2};sid={apiglobals.sid2};"}
 
-def get_access_token() -> tuple[bool, str | object]:
-    content = ''
+def get_access_token() -> tuple[bool, str | None]:
     try:
         response = requests.get(apiglobals.host1, headers=get_headers())
         content = json.loads(response.content)
@@ -24,7 +23,7 @@ def get_access_token() -> tuple[bool, str | object]:
     except Exception as e:
         print("Error in access token request " + str(e))
 
-    return False, content
+    return False, None
 
 def get_auth_code() -> ResponseAuth:
     respAuth = ResponseAuth()
@@ -50,7 +49,7 @@ def get_auth_code() -> ResponseAuth:
 
     return respAuth
 
-def get_session_id_via_authcode(authCode: str) -> tuple[bool, str | object, str]:
+def get_session_id_via_authcode(authCode: str) -> tuple[bool, str | object, str | None]:
     jsonBody = rsp_request('Authentication.getEnvIdViaAuthCode', {
         'authCode': authCode,
         'locale:': 'en-GB'
@@ -63,4 +62,4 @@ def get_session_id_via_authcode(authCode: str) -> tuple[bool, str | object, str]
     except Exception as e:
         print("Error in getting session id from auth code " + str(e))
 
-    return False, json.loads(response.content), ''
+    return False, json.loads(response.content), None

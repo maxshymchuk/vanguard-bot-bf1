@@ -26,6 +26,7 @@ if __name__ == '__main__':
     if not success:
         raise Exception('Failed to get server')
     else:
+        print('Game ID', globals.gameID)
         print('Successfully found server ' + fullservername)
     
     # #teams = {'02adfedfghikg' : '1'}

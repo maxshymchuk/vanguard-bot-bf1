@@ -1,60 +1,65 @@
 from bf1api.modules.ea import get_access_token, get_session_id_via_authcode, get_auth_code
 from bf1api.modules.gameserver import get_servers_by_persona_ids, search_server, get_player_persona_by_id, get_full_server_details, get_players
-from bf1api.modules.rsp import get_personas_by_ids, kick_player
+from bf1api.modules.rsp import get_persona_by_id, kick_player
 import bf1api.apiglobals as apiglobals
 
-def print_error_message(msg: str, content) -> None:
+def print_error_message(msg: str, content = None) -> None:
     print(msg)
-    if apiglobals.verbose_errors:
+    if apiglobals.verbose_errors and content:
         print('API called returned: ' + str(content))
 
 def init_api(verbose_errors: bool) -> bool:
     apiglobals.verbose_errors = verbose_errors
     success, apiglobals.access_token = get_access_token()
     if not success:
-        print_error_message('Failed to get acceess token', apiglobals.access_token)
+        print_error_message('Failed to get acceess token')
         return False
         
     print('Access token: ' + apiglobals.access_token)
 
     respAuth = get_auth_code()
     if not respAuth.success:
-        print('Failed to get auth code')
+        print_error_message('Failed to get auth code')
         return False
 
     apiglobals.remid2 = respAuth.remid
     apiglobals.sid2 = respAuth.sid
 
-    success, apiglobals.sessionID, apiglobals.myPersonaId = get_session_id_via_authcode(respAuth.code)
+    success, sessionIdOrError, personaId = get_session_id_via_authcode(respAuth.code)
     if not success:
-        print_error_message('Failed to get session id', apiglobals.sessionID)
+        print_error_message('Failed to get session id', sessionIdOrError)
         return False
     
+    apiglobals.sessionID = sessionIdOrError
+    apiglobals.myPersonaId = personaId
+
+    print('Auth Code:', respAuth.code)
+    print('Session ID:', apiglobals.sessionID)
+    print('Persona ID:', apiglobals.myPersonaId)
+
     print('Init API success')
 
-    success, name = get_personas_by_ids(apiglobals.myPersonaId)
+    success, nameOrError = get_persona_by_id(apiglobals.myPersonaId)
     if not success:
-        print('Failed to get persona for id ' + apiglobals.myPersonaId)
+        print_error_message('Failed to get persona for id', nameOrError)
         return False
     
-    print('You are ' + name)
+    print('You are ' + nameOrError)
 
     return True
 
-def get_server_id_and_fullname(servername: str) -> tuple[bool, str, str]:
-    success, serverinfo = search_server(servername)
+def get_server_id_and_fullname(servername: str) -> tuple[bool, str | None, str | None]:
+    success, serverinfoOrError = search_server(servername)
     if not success:
-        print_error_message('Failed to get server' + servername, serverinfo)
-        return False, '', ''
+        print_error_message('Failed to get server' + servername, serverinfoOrError)
+        return False, None, None
 
-    if len(serverinfo['result']['gameservers']) > 0:
-        gameID = serverinfo['result']['gameservers'][0]['gameId']
-        fullServerName = serverinfo['result']['gameservers'][0]['name']
+    servers = serverinfoOrError['result']['gameservers']
+    if len(servers) > 0:
+        return True, servers[0]['gameId'], servers[0]['name']
     else:
         print('No server found called ' + servername)
-        return False, '', ''
-    
-    return True, gameID, fullServerName
+        return False, None, None
 
 if __name__ == '__main__':
 
