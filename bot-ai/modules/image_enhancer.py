@@ -26,7 +26,7 @@ def enhance_image(image, target_height = 100):
 
     image_hsv = cv.cvtColor(image_array, cv.COLOR_RGB2HSV)
 
-    masks = createMasksByColors(image_hsv, globals.allyColor, globals.enemyColor, globals.squadColor)
+    masks = createMasksByColors(image_hsv, globals.allyColor, globals.enemyColor)
 
     mask = cv.bitwise_not(cv.bitwise_or(*masks))
     white_background = np.full_like(image_hsv, 255)

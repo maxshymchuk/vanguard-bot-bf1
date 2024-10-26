@@ -39,12 +39,12 @@ def get_servers_by_persona_ids(personaID):
 def get_players(gameID) -> dict:
     try:
         params = {'gameID': gameID}
+        teams = dict()
 
         response = requests.get(apiglobals.gametools, params=params)
         if response.status_code == 200:
             parsed_content = json.loads(response.content)
 
-            teams = dict()
             team1 = parsed_content['teams'][0]['players']
             team2 = parsed_content['teams'][1]['players']
             team1.extend(team2)
