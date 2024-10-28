@@ -9,12 +9,26 @@ def _kick(playerName: str, reason: str, personaId) -> bool:
     # Don't kick yet, must test we aren't generating false positives
     # success, content = kick_player(globals.gameID, personaId, reason)
     # -------------------------------------------------------------------------------
-
-    if True:
+    success = True
+    if success:
         print('Kicked player ' + playerName + ' for reason: ' + reason + '!')
+#         globals.webhook.send(fr"""
+# ```
+# ✅KICK(TEST NOT ACTUAL KICK)
+#     Name: {playerName}
+#     Kick Reason: {reason}
+#     PID: {personaId}
+# ```""", username="VG_Vanguard")
         return True
     else:
         print('Found player ' + playerName + ' but failed to kick him, JSON: ' + str(content))
+        globals.webhook.send(fr"""
+```
+❌KICK
+    Name: {playerName}
+    Kick Reason: {reason}
+    PID: {personaId}
+```""", username="VG_Vanguard")
         return False    
 
 def _search_for_and_kick_player(playerName: str, reason: str, teams) -> bool:
@@ -35,7 +49,7 @@ def _search_for_and_kick_player(playerName: str, reason: str, teams) -> bool:
         print('Attempted kick player ' + playerName + ' is likely to have name ' + mostLikelyName + ' with probability ' + str(highestProbability))
 
         if mostLikelyName in teams.keys():
-            return _kick(playerName, reason, teams[mostLikelyName])
+            return _kick(mostLikelyName, reason, teams[mostLikelyName])
     
     return False
 

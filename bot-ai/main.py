@@ -7,6 +7,7 @@ from modules.image_checker import check_image_thread
 from modules.window_scanner import scan_window_thread
 from modules.bf1api_integration import _search_for_and_kick_player
 from bf1api.main import init_api, get_server_id_and_fullname
+from discord import utils as discordutils
 
 pytesseract.pytesseract.tesseract_cmd = './tesseract/tesseract.exe'
 
@@ -26,7 +27,6 @@ if __name__ == '__main__':
     if not success:
         raise Exception('Failed to get server')
     else:
-        print('Game ID', globals.gameID)
         print('Successfully found server ' + fullservername)
     
     # #teams = {'02adfedfghikg' : '1'}
@@ -49,5 +49,5 @@ if __name__ == '__main__':
     except Exception as e:
         print(f'Unexpected error: {e}')
     finally:
-        input("press a key")
+        input("Press a key")
         print('Program terminated')
