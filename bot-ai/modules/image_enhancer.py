@@ -1,19 +1,19 @@
 import math
-import globals
+import config
 import cv2 as cv
 import numpy as np
 
-def getColorIntervalFromRGB(rgb: tuple[int, int, int], treshold = 80) -> tuple:
+def get_color_interval_from_rgb(rgb: tuple[int, int, int], treshold = 80) -> tuple:
     r, g, b = rgb
     hsv = cv.cvtColor(np.uint8([[[r, g, b]]]), cv.COLOR_RGB2HSV)[0][0]
     min = np.array([hsv[0] - treshold, 110, 100])
     max = np.array([hsv[0] + treshold, 255, 255])
     return min, max
 
-def createMasksByColors(image_hsv, *colors) -> tuple:
+def create_masks_by_colors(image_hsv, *colors) -> tuple:
     masks = []
     for color in colors:
-        lower, upper = getColorIntervalFromRGB(color)
+        lower, upper = get_color_interval_from_rgb(color)
         masks.append(cv.inRange(image_hsv, lower, upper))
     return tuple(masks)
 
@@ -26,7 +26,7 @@ def enhance_image(image, target_height = 100):
 
     image_hsv = cv.cvtColor(image_array, cv.COLOR_RGB2HSV)
 
-    masks = createMasksByColors(image_hsv, globals.ally_color, globals.enemy_color)
+    masks = create_masks_by_colors(image_hsv, config.ally_color, config.enemy_color)
 
     mask = cv.bitwise_not(cv.bitwise_or(*masks))
     white_background = np.full_like(image_hsv, 255)
@@ -46,7 +46,7 @@ def enhance_weapon_image(image, target_height = 50):
 
     image_hsv = cv.cvtColor(image_array, cv.COLOR_RGB2GRAY)
 
-    maskimg = cv.imread('modules/weaponmask.png')
+    maskimg = cv.imread('assets/weaponmask.png')
 
     maskimg = cv.resize(maskimg, (math.trunc(ratio * width), math.trunc(ratio * height)), interpolation = cv.INTER_CUBIC)
 
