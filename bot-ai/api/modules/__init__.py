@@ -1,5 +1,3 @@
-from .init_api import init_api
-
 # gameserver
 from .get_player_persona_by_name import get_player_persona_by_name
 from .get_servers_by_persona_id import get_servers_by_persona_id

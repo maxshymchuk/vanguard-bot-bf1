@@ -1,6 +1,7 @@
 import requests
 import json
-from .common import print_error_message, rpc_request
+from .common import rpc_request
+from ..utils import print_error_message
 from .. import endpoints
 
 def get_session_id_by_authcode(auth_code: str) -> tuple[bool, str | object, str | None]:

@@ -1,6 +1,7 @@
 import json
 import requests
-from .common import print_error_message, rest_headers
+from .common import rest_headers
+from ..utils import print_error_message
 from .. import endpoints
 
 def get_access_token() -> tuple[bool, str | None]:

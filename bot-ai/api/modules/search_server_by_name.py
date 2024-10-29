@@ -1,6 +1,7 @@
 import json
 import requests
-from .common import print_error_message, rpc_headers, rpc_request
+from .common import rpc_headers, rpc_request
+from ..utils import print_error_message
 from .. import endpoints
 
 def search_server_by_name(server_name: str) -> tuple[bool, object]:
