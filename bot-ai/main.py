@@ -22,7 +22,6 @@ if __name__ == '__main__':
 
     try:
         args = globals.parser.parse_args()
-        print(args)
         if 'config' in args:
             config.should_read_config = args.config
         if 'verbose' in args:
