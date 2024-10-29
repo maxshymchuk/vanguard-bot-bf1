@@ -14,8 +14,6 @@ def init_api(verbose_errors: bool) -> bool:
     if not success:
         print_error_message('Failed to get acceess token')
         return False
-        
-    print('Access token: ' + apiglobals.access_token)
 
     respAuth = get_auth_code()
     if not respAuth.success:
@@ -32,10 +30,6 @@ def init_api(verbose_errors: bool) -> bool:
     
     apiglobals.sessionID = sessionIdOrError
     apiglobals.myPersonaId = personaId
-
-    print('Auth Code:', respAuth.code)
-    print('Session ID:', apiglobals.sessionID)
-    print('Persona ID:', apiglobals.myPersonaId)
 
     print('Init API success')
 
@@ -62,10 +56,10 @@ def get_server_id_and_fullname(servername: str) -> tuple[bool, str | None, str |
         return False, None, None
 
 if __name__ == '__main__':
-
-    if not init_api(True):
-        print('Failed to init api')
-        quit()
+    pass
+    # if not init_api(True):
+    #     print('Failed to init api')
+    #     quit()
 
     # success, teams = get_players(gameID)
     # if not success:

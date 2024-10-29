@@ -9,8 +9,7 @@ def _kick(playerName: str, reason: str, personaId) -> bool:
     # Don't kick yet, must test we aren't generating false positives
     # success, content = kick_player(globals.gameID, personaId, reason)
     # -------------------------------------------------------------------------------
-    success = True
-    if success:
+    if True:
         print('Kicked player ' + playerName + ' for reason: ' + reason + '!')
 #         globals.webhook.send(fr"""
 # ```
