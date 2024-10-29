@@ -23,7 +23,7 @@ banned_weapons = {
 
 # controllable by cli arguments
 should_read_config = False
-verbose_errors = True
+verbose_errors = False
 
 next_player_button = Coordinate()
 player_name = Box()
