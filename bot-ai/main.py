@@ -1,12 +1,12 @@
 import time
 import threading
 import globals
+import config
 import signal
 import pytesseract
-from modules.image_checker import check_image_thread
-from modules.window_scanner import scan_window_thread
-from modules.bf1api_integration import _search_for_and_kick_player
-from bf1api.main import init_api, get_server_id_and_fullname
+from api import init_api
+from modules import check_image_thread, scan_window_thread
+from modules.integration import get_server_id_and_fullname
 
 pytesseract.pytesseract.tesseract_cmd = './tesseract/tesseract.exe'
 
@@ -16,24 +16,41 @@ def handle_signal(signum, frame):
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 if __name__ == '__main__':
-
-    if not init_api(True):
-        raise Exception('Failed to init API')
-    
-    servername = '![VG]Vanguard'
-    success, globals.gameID, fullservername = get_server_id_and_fullname(servername)
-
-    if not success:
-        raise Exception('Failed to get server')
-    else:
-        print('Successfully found server ' + fullservername)
-        
     signal.signal(signal.SIGINT, handle_signal)
-    thread1 = threading.Thread(target=scan_window_thread)
-    thread2 = threading.Thread(target=check_image_thread)
-    thread1.start()
-    thread2.start()
+
+    print('Vanguard Bot Tool')
+
     try:
+        args = globals.parser.parse_args()
+        print(args)
+        if 'config' in args:
+            config.should_read_config = args.config
+        if 'verbose' in args:
+            config.verbose_errors = args.verbose
+    except:
+        pass
+
+    print(f'Use config? {config.should_read_config}')
+    print(f'Verbose API errors? {config.verbose_errors}')
+
+    try:
+        if not init_api():
+            raise Exception('Failed to init API')
+
+        print('Init API success')
+
+        servername = '![VG]Vanguard'
+        success, globals.game_id, fullservername = get_server_id_and_fullname(servername)
+
+        if not success:
+            raise Exception('Failed to get server')
+
+        print('Successfully found server ' + fullservername)
+
+        thread1 = threading.Thread(target=scan_window_thread)
+        thread2 = threading.Thread(target=check_image_thread)
+        thread1.start()
+        thread2.start()
         while not globals.threads_stop.is_set():
             time.sleep(1)
         thread1.join()
