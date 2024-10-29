@@ -1,13 +1,13 @@
 import globals
 import config
-from api import get_players_by_game_id, kick_player
+import api
 from modules.utils import get_string_similarity
 
 def _kick(player_name: str, reason: str, persona_id) -> bool:
 
     # -------------------------------------------------------------------------------
     # Don't kick yet, must test we aren't generating false positives
-    # success, content = kick_player(globals.game_id, persona_id, reason)
+    # success, content = api.kick_player(globals.game_id, persona_id, reason)
     # -------------------------------------------------------------------------------
     if True:
         print('Kicked player ' + player_name + ' for reason: ' + reason + '!')
@@ -60,7 +60,7 @@ def find_and_kick_player(player_name: str, reason: str) -> bool:
     print('Getting player list again')
 
     # Worst case we have to get the player list again and search
-    success, find_and_kick_player.teams = get_players_by_game_id(globals.game_id)
+    success, find_and_kick_player.teams = api.get_players_by_game_id(globals.game_id)
 
     if not success:
         print('Failed to get player list ' + str(find_and_kick_player.teams))

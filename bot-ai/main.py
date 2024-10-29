@@ -4,7 +4,7 @@ import globals
 import config
 import signal
 import pytesseract
-from api import init_api
+import api
 from modules import check_image_thread, scan_window_thread
 from modules.integration import get_server_id_and_fullname
 
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     print(f'Verbose API errors? {config.verbose_errors}')
 
     try:
-        if not init_api():
+        if not api.init():
             raise Exception('Failed to init API')
 
         print('Init API success')

@@ -1,6 +1,6 @@
 import json
 import requests
-from .common import print_error_message
+from ..utils import print_error_message
 from .. import apiglobals
 from .. import endpoints
 

@@ -1,5 +1,6 @@
 import requests
-from .common import print_error_message, rest_headers
+from .common import rest_headers
+from ..utils import print_error_message
 from .. import endpoints
 
 class ResponseAuth:

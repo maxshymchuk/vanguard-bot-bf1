@@ -1,7 +1,7 @@
-from api import search_server_by_name
+import api
 
 def get_server_id_and_fullname(server_name: str) -> tuple[bool, str | None, str | None]:
-    success, server_info_or_error = search_server_by_name(server_name)
+    success, server_info_or_error = api.search_server_by_name(server_name)
     if not success:
         return False, None, None
 

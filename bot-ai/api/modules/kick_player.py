@@ -1,6 +1,7 @@
 import json
 import requests
-from .common import print_error_message, rpc_headers, rpc_request
+from .common import rpc_headers, rpc_request
+from ..utils import print_error_message
 from .. import endpoints
 
 def kick_player(game_id: str, persona_id: str, reason: str) -> tuple[bool, object]:

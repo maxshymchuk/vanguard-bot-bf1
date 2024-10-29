@@ -1,6 +1,7 @@
 import json
 import requests
-from .common import print_error_message, rpc_headers, rpc_request
+from .common import rpc_headers, rpc_request
+from ..utils import print_error_message
 from .. import endpoints
 
 def get_servers_by_persona_id(persona_id: str) -> tuple[bool, object]:

@@ -1,11 +1,8 @@
-from .common import print_error_message
-from .get_access_token import get_access_token
-from .get_auth_code import get_auth_code
-from .get_session_id_by_authcode import get_session_id_by_authcode
-from .get_persona_by_id import get_persona_by_id
-from .. import apiglobals
+from .modules import get_access_token, get_auth_code, get_session_id_by_authcode, get_persona_by_id
+from .utils import print_error_message
+from . import apiglobals
 
-def init_api() -> bool:
+def init() -> bool:
     success, apiglobals.access_token = get_access_token()
     if not success:
         print_error_message('Failed to get acceess token')

@@ -1,6 +1,6 @@
 import json
 import requests
-from .common import print_error_message
+from ..utils import print_error_message
 from .. import endpoints
 
 def get_players_by_game_id(game_id: str) -> tuple[bool, dict]:
