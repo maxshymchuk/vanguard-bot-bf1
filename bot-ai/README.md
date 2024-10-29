@@ -5,7 +5,7 @@
 | Tool | Why? | Where? |
 | --- | --- | --- |
 | Python 3 | Python language interpreter | [Download](https://www.python.org/downloads/) |
-| Tesseract 3 Portable | Text recognition service | [Download]() |
+| Tesseract 3 Portable | Text recognition service | [Download](https://github.com/maxshymchuk/bf1-vg-bot/releases/tag/tesseract) |
 | Pre-trained data | PyTorch models and weights | [Download](https://github.com/maxshymchuk/bf1-vg-bot/releases/tag/models) |
 
 ## Installation
