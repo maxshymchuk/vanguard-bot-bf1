@@ -1,8 +1,15 @@
+import os
+from dotenv import load_dotenv
 from .modules import get_access_token, get_auth_code, get_session_id_by_authcode, get_persona_by_id
 from .utils import print_error_message
 from . import apiglobals
 
+load_dotenv()
+
 def init() -> bool:
+    apiglobals.sid = os.getenv('SID')
+    apiglobals.remid = os.getenv('REMID')
+
     success, apiglobals.access_token = get_access_token()
     if not success:
         print_error_message('Failed to get acceess token')
@@ -13,8 +20,8 @@ def init() -> bool:
         print_error_message('Failed to get auth code')
         return False
 
-    apiglobals.remid2 = resp_auth.remid
-    apiglobals.sid2 = resp_auth.sid
+    apiglobals.remid = resp_auth.remid
+    apiglobals.sid = resp_auth.sid
 
     success, session_id_or_error, persona_id = get_session_id_by_authcode(resp_auth.code)
     if not success:

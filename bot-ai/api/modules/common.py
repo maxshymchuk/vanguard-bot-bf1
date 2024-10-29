@@ -1,9 +1,8 @@
 import uuid
-import config
 from .. import apiglobals
 
 def rest_headers() -> dict[str, str]:
-    return {'Cookie': f'remid={apiglobals.remid2};sid={apiglobals.sid2};'}
+    return {'Cookie': f'remid={apiglobals.remid};sid={apiglobals.sid};'}
 
 def rpc_headers() -> dict[str, str]:
     return {'X-GatewaySession': apiglobals.session_id}
