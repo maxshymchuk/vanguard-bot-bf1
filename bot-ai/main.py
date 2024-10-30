@@ -24,7 +24,7 @@ if __name__ == '__main__':
         print(f'Verbose API errors? {config.verbose_errors}')
 
         if not immediate_start:
-            input('Press any button to continue')
+            input('Press enter to continue')
 
         if not api.init():
             raise Exception('Failed to init API')
