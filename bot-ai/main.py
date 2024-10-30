@@ -3,12 +3,9 @@ import threading
 import globals
 import config
 import signal
-import pytesseract
 import api
-from modules import check_image_thread, scan_window_thread
+from modules import init, check_image_thread, scan_window_thread
 from modules.integration import get_server_id_and_fullname
-
-pytesseract.pytesseract.tesseract_cmd = './tesseract/tesseract.exe'
 
 def handle_signal(signum, frame):
     print('Stopping threads, please wait...')
@@ -20,31 +17,26 @@ if __name__ == '__main__':
 
     print('Vanguard Bot Tool')
 
-    try:
-        args = globals.parser.parse_args()
-        if 'config' in args:
-            config.should_read_config = args.config
-        if 'verbose' in args:
-            config.verbose_errors = args.verbose
-    except:
-        pass
-
-    print(f'Use config? {config.should_read_config}')
-    print(f'Verbose API errors? {config.verbose_errors}')
+    immediate_start = init()
 
     try:
+        print(f'Use config? {config.should_read_config}')
+        print(f'Verbose API errors? {config.verbose_errors}')
+
+        if not immediate_start:
+            input('Press any button to continue')
+
         if not api.init():
             raise Exception('Failed to init API')
 
         print('Init API success')
 
-        servername = '![VG]Vanguard'
-        success, globals.game_id, fullservername = get_server_id_and_fullname(servername)
+        success, globals.game_id, full_server_name = get_server_id_and_fullname(config.server_name)
 
         if not success:
             raise Exception('Failed to get server')
 
-        print('Successfully found server ' + fullservername)
+        print('Successfully found server', full_server_name)
 
         thread1 = threading.Thread(target=scan_window_thread)
         thread2 = threading.Thread(target=check_image_thread)

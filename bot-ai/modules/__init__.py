@@ -1,3 +1,5 @@
+from .args_parser import init
+
 from .image_checker import check_image_thread
 
 from .image_enhancer import enhance_image, enhance_weapon_image
