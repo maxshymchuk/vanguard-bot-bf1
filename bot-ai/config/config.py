@@ -2,13 +2,10 @@ from discord import SyncWebhook
 from pathlib import Path
 from classes import Box, Coordinate
 
+server_name = '![VG]Vanguard'
 window_title = 'Battlefield™ 1'
 screenshots_path = Path.cwd() / 'screenshots'
 config_path = Path.cwd() / 'config' / 'config.txt'
-
-ally_color = (64, 118, 199)
-enemy_color = (189, 54, 49)
-squad_color = (74, 155, 44)
 
 weapon_text_similarity_probability = 0.7
 player_name_similarity_probability = 0.3
@@ -24,6 +21,9 @@ banned_weapons = {
 # controllable by cli arguments
 should_read_config = False
 verbose_errors = False
+ally_color = (64, 118, 199)
+enemy_color = (189, 54, 49)
+squad_color = (74, 155, 44)
 
 next_player_button = Coordinate()
 player_name = Box()
