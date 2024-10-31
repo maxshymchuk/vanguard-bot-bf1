@@ -12,7 +12,7 @@ def init() -> bool:
 
     success, apiglobals.access_token = get_access_token()
     if not success:
-        print_error_message('Failed to get acceess token')
+        print_error_message('Failed to get access token')
         return False
 
     resp_auth = get_auth_code()

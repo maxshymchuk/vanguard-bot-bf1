@@ -7,7 +7,7 @@ import math
 import pygetwindow as gw
 from pynput.mouse import Controller, Button
 from PIL import Image, ImageGrab
-from .integration import find_and_kick_player
+from .integration import check_player_weapons, find_and_kick_player
 from .image_enhancer import enhance_image, enhance_weapon_image
 from .screen_capture import capture_screen
 from .recognition import recognize_text, recognize_image
@@ -32,10 +32,11 @@ def save_log(screenshot, mask, players) -> None:
         with open(f'{path}/text.txt', 'w') as f:
             f.write(players)
 
+# TODO: this can be deleted
 def save_img(screenshot, weapon, path):
     screenshot.save(f'{path}/{weapon}-{math.trunc(time.time())}.png')
 
-def save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon):
+def save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, prediction, probability):
     postfix = f'{math.trunc(time.time())}'
     path = f'{config.screenshots_path}/screenshot-{postfix}'
     os.makedirs(path)
@@ -43,8 +44,10 @@ def save_weapon_and_player(player_name_img, player_mask, player, weapon_img, wea
     Image.fromarray(weapon_mask).save(f'{path}/weapon_mask.png')
     player_name_img.save(f'{path}/player_name.png')
     weapon_img.save(f'{path}/weapon.png')
+    weapon_icon_img.save(f'{path}/weapon_icon.png')
     if player or weapon:
         with open(f'{path}/text.txt', 'w') as f:
+            f.write(f'Prediction: ' + str(prediction) + ' with probability ' + str(probability) + '\n')
             if player:
                 f.write(player)
             if weapon:
@@ -55,24 +58,36 @@ mouse = Controller()
 def check_image(active_window) -> None:
     player_name_img = capture_screen(config.player_name.x, config.player_name.y, config.player_name.width, config.player_name.height)
     enhanced_player_image, player_mask = enhance_image(player_name_img)
-    player = recognize_text(enhanced_player_image, available_nickname_symbols)
+    player = recognize_text(enhanced_player_image, lang='FuturaMaxiCGBookRegular', available_symbols=available_nickname_symbols)
 
-    player_weapon_img = capture_screen(config.weapon_name.x, config.weapon_name.y, config.weapon_name.width, config.weapon_name.height)
-    enhanced_weapon_image, weapon_mask = enhance_weapon_image(player_weapon_img)
-    weapon = recognize_text(enhanced_weapon_image, available_weapon_symbols)
+    weapon_img = capture_screen(config.weapon_name.x, config.weapon_name.y, config.weapon_name.width, config.weapon_name.height)
+    enhanced_weapon_image, weapon_mask = enhance_weapon_image(weapon_img)
+    weapon = recognize_text(enhanced_weapon_image, lang='FuturaMaxiCGBookRegular', available_symbols=available_weapon_symbols)
 
-    # player_weapon_icon = ImageGrab.grab(bbox = (1230, 740, 1367, 835)) TEMP VALUES FOR TRAINING IMAGE COLLECTING
-    # save_weapon_and_player(player_name_img, player_mask, player, player_weapon_img, weapon_mask, weapon)
+    weapon_icon_img = ImageGrab.grab(bbox = (1230, 740, 1367, 835)) # TEMP VALUES FOR TRAINING IMAGE COLLECTING
 
-    if player and weapon:
-        print(f"Player {player} using weapon {weapon}")
-        for banned_weapon in config.banned_weapons.keys():
-            probability = get_string_similarity(weapon, banned_weapon)
-            if probability >= config.weapon_text_similarity_probability:
-                print(f'Kick Player {player} for using {config.banned_weapons[banned_weapon]}! Probability {probability}')
-                save_weapon_and_player(player_name_img, player_mask, player, player_weapon_img, weapon_mask, weapon)
-                find_and_kick_player(player, f'No {config.banned_weapons[banned_weapon]}, Read Rules')
-                break
+    if player:
+        isBanned, bannedWeapon, prediction, probability = check_player_weapons(weapon_icon_img, weapon)
+        print(f'Player {player} using weapon {weapon} in category {prediction} with probability {str(probability)}')
+        if isBanned:
+            find_and_kick_player(player, f'No {bannedWeapon}, Read Rules')
+        
+        if config.should_save_screenshots:
+            save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, prediction, str(probability))
+
+    
+    # if player:
+    #     preds, probs = models.predict_icon(weapon_icon_img)
+    #     pred = preds[0]
+    #     prob = probs[0]
+    #     if weapon:
+    #         print(f'Player {player} with weapon: {weapon}, predict:' + str(pred) + ' with probability ' + str(prob))
+    #         save_weapon_and_player(player_name_img, player_mask, player, Image.fromarray(enhanced_weapon_image), weapon_mask, weapon, weapon_icon_img, pred, prob)
+    #         #save_img(player_weapon_icon, weapon, "C:\\Users\\Luke\\Desktop\\bf1ai\\banned")
+    #     else:
+    #         print('Player {player}, weapon predict: ' + str(pred) + ' with probability ' + str(prob))
+    #         save_weapon_and_player(player_name_img, player_mask, player, Image.fromarray(enhanced_weapon_image), weapon_mask, 'no weapon found', weapon_icon_img, pred, prob)
+    #         #save_img(player_weapon_icon, 'none', "C:\\Users\\Luke\\Desktop\\bf1ai\\banned")
 
     # go to next player
     mouse.position = config.next_player_button.x, config.next_player_button.y
@@ -87,13 +102,13 @@ def check_image_thread() -> None:
             else:
                 try:
                     active_window = gw.getActiveWindow()
-                    if not active_window.title == config.window_title:
+                    if active_window.title and not active_window.title == config.window_title:
                         print(f'Window ({config.window_title}) must be active')
                     else:
                         config.init()
                         check_image(active_window)
                 except FileNotFoundError:
                     print('Image not found')
-                except Exception as e:
-                    print(f'Unexpected error: {e}')
+                # except Exception as e:
+                #     print(f'Unexpected error: {e}')
         time.sleep(1) # 1 second interval to check if bot can run

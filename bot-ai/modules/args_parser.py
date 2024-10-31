@@ -9,7 +9,7 @@ def init() -> bool:
     immediate_start = False
     try:
         args, unknown = globals.parser.parse_known_args()
-
+        
         if 'start' in args:
             immediate_start = args.start
 
@@ -18,6 +18,9 @@ def init() -> bool:
 
         if 'verbose' in args:
             config.verbose_errors = args.verbose
+
+        if 'screenshot' in args:
+            config.should_save_screenshots = args.screenshot
 
         if 'ally_color' in args:
             print('ally_color')

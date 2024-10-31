@@ -37,24 +37,19 @@ def enhance_image(image, target_height = 100):
 
     return result, mask
 
-def enhance_weapon_image(image, target_height = 50):
+def enhance_weapon_image(image, target_height = 100):
     image_array = np.array(image)
 
-    height, width = image_array.shape[:2]
-    ratio = target_height / height
-    image_array = cv.resize(image_array, (math.trunc(ratio * width), math.trunc(ratio * height)), interpolation = cv.INTER_CUBIC)
+    image_gray = cv.cvtColor(image_array, cv.COLOR_RGB2GRAY)
 
-    image_hsv = cv.cvtColor(image_array, cv.COLOR_RGB2GRAY)
+    # binary_image = cv.adaptiveThreshold(image_gray, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 3, 1)
 
-    maskimg = cv.imread('assets/weaponmask.png')
+    # scale_factor = 1.25
 
-    maskimg = cv.resize(maskimg, (math.trunc(ratio * width), math.trunc(ratio * height)), interpolation = cv.INTER_CUBIC)
+    # # Calculate the new dimensions
+    # new_width = int(binary_image.shape[1] * scale_factor)
+    # new_height = int(binary_image.shape[0] * scale_factor)
 
-    mask = cv.cvtColor(maskimg, cv.COLOR_RGB2GRAY)
+    # result = cv.resize(binary_image, (new_width, new_height), interpolation=cv.INTER_CUBIC)
 
-   # greycolourmask = cv.inRange(image_hsv, 0, 120)
-    #mask = cv.bitwise_and(mask, greycolourmask)
-    result = cv.bitwise_and(image_hsv, image_hsv, mask = mask)
-    mask = cv.bitwise_and(mask, image_hsv)
-
-    return result, mask
+    return image_gray, image_array
