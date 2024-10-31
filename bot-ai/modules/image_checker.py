@@ -37,7 +37,7 @@ def save_img(screenshot, weapon, path):
     screenshot.save(f'{path}/{weapon}-{math.trunc(time.time())}.png')
 
 def save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, prediction, probability):
-    postfix = f'{math.trunc(time.time())}'
+    postfix = f'{math.trunc(time.time())}-{weapon}'
     path = f'{config.screenshots_path}/screenshot-{postfix}'
     os.makedirs(path)
     Image.fromarray(player_mask).save(f'{path}/player_mask.png')
@@ -75,7 +75,6 @@ def check_image(active_window) -> None:
         if config.should_save_screenshots:
             save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, prediction, str(probability))
 
-    
     # if player:
     #     preds, probs = models.predict_icon(weapon_icon_img)
     #     pred = preds[0]
@@ -83,11 +82,11 @@ def check_image(active_window) -> None:
     #     if weapon:
     #         print(f'Player {player} with weapon: {weapon}, predict:' + str(pred) + ' with probability ' + str(prob))
     #         save_weapon_and_player(player_name_img, player_mask, player, Image.fromarray(enhanced_weapon_image), weapon_mask, weapon, weapon_icon_img, pred, prob)
-    #         #save_img(player_weapon_icon, weapon, "C:\\Users\\Luke\\Desktop\\bf1ai\\banned")
+    #         #save_img(player_weapon_icon, weapon,
     #     else:
     #         print('Player {player}, weapon predict: ' + str(pred) + ' with probability ' + str(prob))
     #         save_weapon_and_player(player_name_img, player_mask, player, Image.fromarray(enhanced_weapon_image), weapon_mask, 'no weapon found', weapon_icon_img, pred, prob)
-    #         #save_img(player_weapon_icon, 'none', "C:\\Users\\Luke\\Desktop\\bf1ai\\banned")
+    #         #save_img(player_weapon_icon, 'none',
 
     # go to next player
     mouse.position = config.next_player_button.x, config.next_player_button.y
@@ -102,13 +101,13 @@ def check_image_thread() -> None:
             else:
                 try:
                     active_window = gw.getActiveWindow()
-                    if active_window.title and not active_window.title == config.window_title:
+                    if active_window and not active_window.title == config.window_title:
                         print(f'Window ({config.window_title}) must be active')
                     else:
                         config.init()
                         check_image(active_window)
                 except FileNotFoundError:
                     print('Image not found')
-                # except Exception as e:
-                #     print(f'Unexpected error: {e}')
-        time.sleep(1) # 1 second interval to check if bot can run
+                except Exception as e:
+                    print(f'Unexpected error: {e}')
+        time.sleep(0.1) # 1 second interval to check if bot can run

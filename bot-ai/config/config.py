@@ -15,9 +15,8 @@ webhook = SyncWebhook.from_url('https://discord.com/api/webhooks/101855111325707
 
 # dict: common recognition name : pretty name for kick messages
 banned_weapons = {
-    'SMG08I8Factory' : 'SMG08'
-}
-#'5x HE Cluster Bomb' : 'Heavy Bomber', 'HE Cluster Bombs' : 'Heavy Bomber'}
+    'SMG08/18Factory' : 'SMG08',
+    '5x HE Cluster Bomb' : 'Heavy Bomber', 'HE Cluster Bombs' : 'Heavy Bomber'}
 
 # controllable by cli arguments
 should_read_config = False

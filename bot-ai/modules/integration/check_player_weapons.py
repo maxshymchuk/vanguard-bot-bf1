@@ -17,14 +17,18 @@ def check_player_weapons(weapon_icon_image, weapon_text: str) -> tuple[bool, str
             preds, probs = predict_icon(weapon_icon_image)
             prediction = preds[0]
             probability = probs[0]
-            if prediction != 'allowedprimaryguns' and probability >= config.icon_probability:
-                return _check_weapon_str(weapon_text), prediction, probability
-            else:
-                return False, weapon_text, prediction, probability
+            if probability >= config.icon_probability:
+                if prediction != 'allowedprimaryguns':
+                    return _check_weapon_str(weapon_text), prediction, probability
+                else:
+                    return False, weapon_text, prediction, probability
+                
+            print(f'Probability {str(probability)} too low, only checking weapon string')
         except Exception as e:
             print(e)
             return False, weapon_text, '', 0
-    elif weapon_text:
+    
+    if weapon_text:
         return _check_weapon_str(weapon_text), '', 0
     
     # weapon_icon_image and weapon_text were both None, this should never happen
