@@ -13,23 +13,20 @@ def _check_weapon_str(weapon_text) -> tuple[bool, str]:
 # Return: Whether the player is using a banned weapon, the weapon text, predicted weapon category, probability of predicted weapon category
 def check_player_weapons(weapon_icon_image, weapon_text: str) -> tuple[bool, str, str, float]:
     if weapon_icon_image:
-        try:
-            preds, probs = predict_icon(weapon_icon_image)
-            prediction = preds[0]
-            probability = probs[0]
-            if probability >= config.icon_probability:
-                if prediction != 'allowedprimaryguns':
+        preds, probs = predict_icon(weapon_icon_image)
+        prediction = preds[0]
+        probability = probs[0]
+        if probability >= config.icon_probability:
+            if prediction != 'allowedprimaryguns':
+                if weapon_text:
                     isBanned, banned_weapon_name = _check_weapon_str(weapon_text)
                     return isBanned, banned_weapon_name, prediction, probability
-                else:
-                    return False, weapon_text, prediction, probability
-                
+            return False, weapon_text, prediction, probability
+        else:
             print(f'Probability {str(probability)} too low, only checking weapon string')
-        except Exception as e:
-            print(e)
-            return False, weapon_text, '', 0
     
     if weapon_text:
+        print('Check weapon text')
         isBanned, banned_weapon_name = _check_weapon_str(weapon_text)
         return isBanned, banned_weapon_name, '', 0
     

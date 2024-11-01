@@ -35,15 +35,15 @@ schema = {
             'properties': {
                 'ally_color': {
                     'type': 'string',
-                    "pattern": "^(\d+),(\d+),(\d+)$"
+                    "pattern": r"^(\d+),(\d+),(\d+)$"
                 },
                 'enemy_color': {
                     'type': 'string',
-                    "pattern": "^(\d+),(\d+),(\d+)$"
+                    "pattern": r"^(\d+),(\d+),(\d+)$"
                 },
                 'squad_color': {
                     'type': 'string',
-                    "pattern": "^(\d+),(\d+),(\d+)$"
+                    "pattern": r"^(\d+),(\d+),(\d+)$"
                 }
             },
             'additionalProperties': False
@@ -52,6 +52,21 @@ schema = {
             'type': 'object',
             'properties': {
                 'change_player_button_coordinate': {
+                    'type': ['object', 'null'],
+                    'properties': {
+                        'x': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'y': {
+                            'type': 'number',
+                            'minimum': 0
+                        }
+                    },
+                    'required': ['x', 'y'],
+                    'additionalProperties': False
+                },
+                'player_view_button_coordinate': {
                     'type': ['object', 'null'],
                     'properties': {
                         'x': {
@@ -79,6 +94,29 @@ schema = {
                         }
                     },
                     'required': ['x', 'y'],
+                    'additionalProperties': False
+                },
+                'spectator_text_box': {
+                    'type': ['object', 'null'],
+                    'properties': {
+                        'x': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'y': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'width': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'height': {
+                            'type': 'number',
+                            'minimum': 0
+                        }
+                    },
+                    'required': ['x', 'y', 'width', 'height'],
                     'additionalProperties': False
                 },
                 'player_name_box': {

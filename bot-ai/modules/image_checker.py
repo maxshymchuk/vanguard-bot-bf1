@@ -11,10 +11,10 @@ from .integration import check_player_weapons, find_and_kick_player, get_server_
 from .image_enhancer import enhance_image, enhance_weapon_image
 from .screen_capture import capture_screen
 from .recognition import recognize_text
-from .utils import available_nickname_symbols, available_weapon_symbols
-import asyncio
+from .utils import available_nickname_symbols, available_weapon_symbols, common_symbols, string_is_similar_to
+import keyboard
 
-def save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, prediction, probability):
+def save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, prediction, probability, spectator_text_img):
     postfix = f'{math.trunc(time.time())}-{weapon}'
     path = f'{config.screenshots_path}/screenshot-{postfix}'
     os.makedirs(path)
@@ -23,6 +23,7 @@ def save_weapon_and_player(player_name_img, player_mask, player, weapon_img, wea
     player_name_img.save(f'{path}/player_name.png')
     weapon_img.save(f'{path}/weapon.png')
     weapon_icon_img.save(f'{path}/weapon_icon.png')
+    Image.fromarray(spectator_text_img).save(f'{path}/spectator_text.png')
     if player or weapon:
         with open(f'{path}/text.txt', 'w') as f:
             f.write(f'Prediction: ' + str(prediction) + ' with probability ' + str(probability) + '\n')
@@ -32,19 +33,28 @@ def save_weapon_and_player(player_name_img, player_mask, player, weapon_img, wea
                 f.write('\n' + weapon)
 
 mouse = Controller()
-lock = asyncio.Lock()
-loop = asyncio.get_event_loop()
 
-async def check_round_ended():
-    async with lock:
-        success, current_map = get_server_map()
-        if success:
-            if current_map != globals.current_map:
-                globals.current_map = current_map
-                globals.round_ended = True
+def on_press():
+    globals.bot_cycle_paused = not globals.bot_cycle_paused
+    if globals.bot_cycle_paused:
+        print("Paused")
+    else:
+        print("Unpaused")
+
+
+keyboard.add_hotkey('ctrl', on_press)
     
-
 def check_image(active_window) -> None:
+
+    time.sleep(0.1) # Let everything load in
+
+    spectator_text_image = capture_screen(config.spectator_text_box.x, config.spectator_text_box.y, config.spectator_text_box.width, config.spectator_text_box.height)
+    enhanced_spectator_text_image, spec_mask = enhance_weapon_image(spectator_text_image)
+    spectator_text = recognize_text(enhanced_spectator_text_image, available_symbols=common_symbols)
+
+    if not spectator_text or (not string_is_similar_to(spectator_text, "SPECTATOR", 0.8) and not string_is_similar_to(spectator_text, "KILLED BY", 0.8)):
+        print('Spectator text not found, map change?')
+
     player_name_img = capture_screen(config.player_name_box.x, config.player_name_box.y, config.player_name_box.width, config.player_name_box.height)
     enhanced_player_image, player_mask = enhance_image(player_name_img)
     player = recognize_text(enhanced_player_image, available_symbols=available_nickname_symbols)
@@ -57,9 +67,7 @@ def check_image(active_window) -> None:
 
     # TODO: Save probabilities too?
     if config.should_save_screenshot:
-            save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, '', 0)
-
-    mouse.position = config.change_player_button_coordinate.x, config.change_player_button_coordinate.y
+            save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, '', 0, spec_mask)
 
     if player:
         if globals.round_ended:
@@ -69,15 +77,12 @@ def check_image(active_window) -> None:
         print(f'Player {player} using weapon {weapon} in category {prediction} with probability {str(probability)}')
         if isBanned:
             find_and_kick_player(player, f'No {bannedWeapon}, Read Rules')
-    else:
-        if not globals.round_ended:
-            asyncio.run_coroutine_threadsafe(check_round_ended(), loop)
-        else:
-            mouse.position = config.third_person_view_button_coordinate.x, config.third_person_view_button_coordinate.y
 
     # go to next player
-    mouse.press(Button.left)
-    mouse.release(Button.left)
+    if not globals.bot_cycle_paused:
+        mouse.position = config.change_player_button_coordinate.x, config.change_player_button_coordinate.y
+        mouse.press(Button.left)
+        mouse.release(Button.left)
 
 def check_image_thread() -> None:
     while not globals.threads_stop.is_set():
