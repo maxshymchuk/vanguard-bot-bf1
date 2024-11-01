@@ -3,9 +3,7 @@ from pathlib import Path
 from classes import CliArgs
 from dataclasses import dataclass
 from .parser import parser
-
-def check_if_file(path: str):
-    return os.path.exists(path) and os.path.isfile(path)
+from ..utils import check_if_file
 
 @dataclass
 class CliResult:

@@ -1,3 +1,4 @@
+import os
 from difflib import SequenceMatcher
 
 common_symbols = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
@@ -27,3 +28,6 @@ def remove_restricted_symbols(str: str, available_symbols: str | None) -> str:
 
 def get_string_similarity(str1: str, str2: str) -> float:
     return SequenceMatcher(None, str1, str2).ratio()
+
+def check_if_file(path: str):
+    return os.path.exists(path) and os.path.isfile(path)

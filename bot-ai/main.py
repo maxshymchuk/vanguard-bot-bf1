@@ -4,7 +4,7 @@ import globals
 import config
 import signal
 import api
-from modules import cli, check_image_thread, scan_window_thread
+from modules import cli, check_image_thread, scan_window_thread, configure_positions
 from modules.integration import get_server_id_and_fullname
 
 def handle_signal(signum, frame):
@@ -23,7 +23,10 @@ if __name__ == '__main__':
         config.verbose_errors = cli_result.verbose
         config.config_path = cli_result.config_path
 
-        config.init()
+        config_result = config.init()
+
+        if not config_result.is_all_positions_set:
+            configure_positions()
 
         if not cli_result.immediate_start:
             input('Press enter to continue')
