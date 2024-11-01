@@ -7,11 +7,12 @@ import math
 import pygetwindow as gw
 from pynput.mouse import Controller, Button
 from PIL import Image, ImageGrab
-from .integration import check_player_weapons, find_and_kick_player
+from .integration import check_player_weapons, find_and_kick_player, get_server_map
 from .image_enhancer import enhance_image, enhance_weapon_image
 from .screen_capture import capture_screen
 from .recognition import recognize_text
 from .utils import available_nickname_symbols, available_weapon_symbols
+import asyncio
 
 def save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, prediction, probability):
     postfix = f'{math.trunc(time.time())}-{weapon}'
@@ -31,6 +32,17 @@ def save_weapon_and_player(player_name_img, player_mask, player, weapon_img, wea
                 f.write('\n' + weapon)
 
 mouse = Controller()
+lock = asyncio.Lock()
+loop = asyncio.get_event_loop()
+
+async def check_round_ended():
+    async with lock:
+        success, current_map = get_server_map()
+        if success:
+            if current_map != globals.current_map:
+                globals.current_map = current_map
+                globals.round_ended = True
+    
 
 def check_image(active_window) -> None:
     player_name_img = capture_screen(config.player_name_box.x, config.player_name_box.y, config.player_name_box.width, config.player_name_box.height)
@@ -43,19 +55,27 @@ def check_image(active_window) -> None:
 
     weapon_icon_img = capture_screen(config.weapon_icon_box.x, config.weapon_icon_box.y, config.weapon_icon_box.width, config.weapon_icon_box.height)
 
-    print('should save screenshot? ' + str(config.should_save_screenshot))
+    # TODO: Save probabilities too?
     if config.should_save_screenshot:
-            print('save screenshot')
             save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, '', 0)
 
+    mouse.position = config.change_player_button_coordinate.x, config.change_player_button_coordinate.y
+
     if player:
+        if globals.round_ended:
+            globals.round_ended = False
+
         isBanned, bannedWeapon, prediction, probability = check_player_weapons(weapon_icon_img, weapon)
         print(f'Player {player} using weapon {weapon} in category {prediction} with probability {str(probability)}')
         if isBanned:
             find_and_kick_player(player, f'No {bannedWeapon}, Read Rules')
-        
+    else:
+        if not globals.round_ended:
+            asyncio.run_coroutine_threadsafe(check_round_ended(), loop)
+        else:
+            mouse.position = config.third_person_view_button_coordinate.x, config.third_person_view_button_coordinate.y
+
     # go to next player
-    mouse.position = config.change_player_button_coordinate.x, config.change_player_button_coordinate.y
     mouse.press(Button.left)
     mouse.release(Button.left)
 
