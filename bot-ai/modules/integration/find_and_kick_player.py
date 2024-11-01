@@ -1,7 +1,7 @@
 import globals
 import config
 import api
-from modules.utils import get_string_similarity
+from modules.utils import string_is_similar_to, get_string_similarity
 
 def _kick(player_name: str, reason: str, persona_id) -> bool:
 
@@ -30,14 +30,14 @@ def _kick(player_name: str, reason: str, persona_id) -> bool:
 ```""", username="VG_Vanguard")
         return False
 
-def _search_for_and_kick_player(player_name: str, reason: str, teams) -> bool:
+def _search_for_and_kick_player(player_name: str, reason: str) -> bool:
 
-    if player_name in teams.keys():
-        return _kick(player_name, reason, teams[player_name])
+    if player_name in globals.teams.keys():
+        return _kick(player_name, reason, globals.teams[player_name])
 
     highest_probability = 0
     most_likely_name = ''
-    for team_player_name in teams.keys():
+    for team_player_name in globals.teams.keys():
         probability = get_string_similarity(player_name, team_player_name)
         if probability > highest_probability:
             highest_probability = probability
@@ -47,31 +47,29 @@ def _search_for_and_kick_player(player_name: str, reason: str, teams) -> bool:
     if highest_probability > config.player_name_similarity_probability:
         print('Attempted kick player ' + player_name + ' is likely to have name ' + most_likely_name + ' with probability ' + str(highest_probability))
 
-        if most_likely_name in teams.keys():
-            return _kick(most_likely_name, reason, teams[most_likely_name])
+        if most_likely_name in globals.teams.keys():
+            return _kick(most_likely_name, reason, globals.teams[most_likely_name])
 
     return False
 
 def find_and_kick_player(player_name: str, reason: str) -> bool:
 
-    if _search_for_and_kick_player(player_name, reason, find_and_kick_player.teams):
+    if _search_for_and_kick_player(player_name, reason, globals.teams):
         return True
 
     print('Getting player list again')
 
     # Worst case we have to get the player list again and search
-    success, find_and_kick_player.teams = api.get_players_by_game_id(globals.game_id)
+    success, globals.teams = api.get_players_by_game_id(globals.game_id)
 
     if not success:
-        print('Failed to get player list ' + str(find_and_kick_player.teams))
+        print('Failed to get player list ' + str(globals.teams))
         return False
 
     # Search again
-    if _search_for_and_kick_player(player_name, reason, find_and_kick_player.teams):
+    if _search_for_and_kick_player(player_name, reason, globals.teams):
         return True
 
     # Give up :(
     print('Giving up kicking player ' + player_name + ' could not find him in teams')
     return False
-
-find_and_kick_player.teams = dict() # { player_name : persona_id } dict

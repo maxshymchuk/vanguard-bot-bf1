@@ -2,7 +2,10 @@ import threading
 
 game_id = None
 current_window = None
-current_map = None
+
+teams = None
+
+bot_cycle_paused = False
 
 round_ended = False
 

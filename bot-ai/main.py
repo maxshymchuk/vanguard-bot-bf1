@@ -12,7 +12,7 @@ warnings.simplefilter('ignore', FutureWarning)
 import models
 from modules import check_image_thread, scan_window_thread
 from modules import cli, check_image_thread, scan_window_thread
-from modules.integration import get_server_id_and_fullname, get_server_map
+from modules.integration import get_server_id_and_fullname, get_players
 
 def handle_signal(signum, frame):
     print('Stopping threads, please wait...')
@@ -35,18 +35,15 @@ if __name__ == '__main__':
         config_manager = config.init()
 
         if not config_manager.is_all_positions_set or cli_result.resetup:
-            coordinate_strs = ['next player', 'third person view']
-            box_strs = ['player name area', 'weapon icon area', 'weapon name area']
+            coordinate_strs = ['next player', 'player view', 'third person view']
+            box_strs = ['spectator text area', 'player name area', 'weapon icon area', 'weapon name area']
             input('Press enter to begin setup')
             config_overlay = config.overlay.ConfigOverlay(coordinate_strs, box_strs)
             success, coordinates, boxes = config_overlay.execute_setup()
             if success:
                 print('Config set')
-                config.change_player_button_coordinate = coordinates[0]
-                config.third_person_view_button_coordinate = coordinates[1]
-                config.player_name_box = boxes[0]
-                config.weapon_icon_box = boxes[1]
-                config.weapon_name_box = boxes[2]
+                config.change_player_button_coordinate, config.player_view_button_coordinate, config.third_person_view_button_coordinate = coordinates
+                config.spectator_text_box, config.player_name_box, config.weapon_icon_box, config.weapon_name_box = boxes
             else:
                 print('Setup config terminated, exiting')
                 quit()
@@ -64,10 +61,13 @@ if __name__ == '__main__':
 
         if not success:
             raise Exception('Failed to get server')
-
-        success, globals.current_map = get_server_map()
         
-        print(f'Successfully found server {full_server_name} on map {globals.current_map}')
+        success, globals.teams = get_players()
+
+        if not success:
+            raise Exception('Failed to get server teams')
+        
+        print(f'Successfully found server {full_server_name}')
 
         models.load_model()
 
