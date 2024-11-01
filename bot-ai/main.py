@@ -65,6 +65,8 @@ if __name__ == '__main__':
 
         if not success:
             raise Exception('Failed to get server')
+        
+        success, map_name = integration.
 
         print('Successfully found server', full_server_name)
 

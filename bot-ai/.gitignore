@@ -3,6 +3,7 @@ tesseract/*
 
 models/*
 !models/README.md
+!models/predict.py
 
 screenshots/*
 !screenshots/README.md

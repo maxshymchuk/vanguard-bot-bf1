@@ -3,7 +3,7 @@ from .get_player_persona_by_name import get_player_persona_by_name
 from .get_servers_by_persona_id import get_servers_by_persona_id
 from .search_server_by_name import search_server_by_name
 from .get_players_by_game_id import get_players_by_game_id
-from .get_full_server_details_by_game_id import get_full_server_details_by_game_id
+from .get_server_details_by_game_id import get_server_details_by_game_id
 
 # ea
 from .get_access_token import get_access_token
