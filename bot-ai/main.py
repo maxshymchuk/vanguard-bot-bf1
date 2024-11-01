@@ -1,5 +1,6 @@
 import time
 import threading
+import config.overlay
 import globals
 import config
 import api
@@ -10,6 +11,7 @@ warnings.simplefilter('ignore', UserWarning)
 warnings.simplefilter('ignore', FutureWarning)
 import models
 from modules import init, check_image_thread, scan_window_thread
+from modules import cli, check_image_thread, scan_window_thread, configure_positions
 from modules.integration import get_server_id_and_fullname
 from modules.recognition import recognize_text
 
@@ -22,14 +24,34 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, handle_signal)
     print('Vanguard Bot Tool')
 
-    immediate_start = init()
-
     try:
-        print(f'Use config? {config.should_read_config}')
-        print(f'Verbose API errors? {config.verbose_errors}')
-        print(f'Save screenshots? {config.should_save_screenshots}')
+        cli_result = cli.init()
 
-        if not immediate_start:
+        config.verbose_errors = cli_result.verbose
+
+        if cli_result.config_path:
+            config.config_path = cli_result.config_path
+
+        config_manager = config.init()
+
+        if not config_manager.is_all_positions_set:
+            coordinate_strs = ['next player', 'third person view']
+            box_strs = ['player name area', 'weapon icon area', 'weapon name area']
+            configoverlay = config.overlay.ConfigOverlay(coordinate_strs, box_strs)
+            success, coordinates, boxes = configoverlay.execute_setup()
+            if success:
+                print('Config set')
+                config.change_player_button_coordinate = coordinates[0]
+                config.third_person_view_button_coordinate = coordinates[1]
+                config.player_name_box = boxes[0]
+                config.weapon_icon_box = boxes[1]
+                config.weapon_name_box = boxes[2]
+            else:
+                print('Failed to set config, exiting')
+                quit()
+            config_manager.save()
+
+        if not cli_result.immediate_start:
             input('Press enter to continue')
 
         if not api.init():
