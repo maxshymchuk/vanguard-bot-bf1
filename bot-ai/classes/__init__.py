@@ -12,7 +12,6 @@ class Box(Coordinate):
     height: int = None
 
 class CliArgs(StrEnum):
-    # flags
     START = 'start'
     VERBOSE = 'verbose'
     CONFIG = 'config'

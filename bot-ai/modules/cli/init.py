@@ -22,9 +22,5 @@ def init() -> CliResult:
     if CliArgs.RESETUP in args:
         res.resetup = args.resetup
     if CliArgs.CONFIG in args:
-        try:
-            res.config_path = args.config
-        except:
-            print('Config path is invalid, using default config')
-
+        res.config_path = args.config
     return res
