@@ -37,7 +37,7 @@ class ConfigOverlay:
         return self.setup_complete, self.coordinate_list, self.box_list
 
     def _get_click_position_coord(self, event):
-        self.coordinate_list.append(Coordinate(event.x, event.y))
+        self.coordinate_list.append(Coordinate(event.x_root, event.y_root))
         self.step_idx += 1
         if self.step_idx < len(self.config_coordinates_strings):
             # Next coordinate setup
@@ -61,6 +61,8 @@ class ConfigOverlay:
             
         self.start_x = event.x
         self.start_y = event.y
+        self.screen_start_x = event.x_root
+        self.screen_start_y = event.y_root
         self.rect = self.canvas.create_rectangle(self.start_x, self.start_y, self.start_x, self.start_y, outline="blue", width=1)
 
     def _update_selection(self, event):
@@ -71,13 +73,16 @@ class ConfigOverlay:
     def _end_selection(self, event):
         self.box_end_x = event.x
         self.box_end_y = event.y
+        self.screen_box_end_x = event.x_root
+        self.screen_box_end_y = event.y_root
 
     def _confirm_selection_box(self, event):
         if self.rect is not None:
             self.canvas.itemconfig(self.rect, outline='green')
-            width = self.start_x + self.box_end_x
-            height = self.start_y + self.box_end_y
-            self.box_list.append(Box(self.start_x, self.start_y, width, height))
+            width = self.screen_box_end_x - self.screen_start_x
+            height = self.screen_box_end_y - self.screen_start_y
+            # TODO: maybe check for negatives
+            self.box_list.append(Box(self.screen_start_x, self.screen_start_y, width, height))
             
             self.root.after(500, self._delete_selection_box)
         
