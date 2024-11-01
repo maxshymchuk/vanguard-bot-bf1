@@ -45,6 +45,10 @@ class ConfigOverlay:
         else:
             # Finished coordinates, Goto box setup
             self.step_idx = 0
+            self.root.withdraw()
+            input('Press enter once on the third person view to continue')
+            self.root.deiconify()
+            self.root.state("zoomed")
             print(f'Drag box over {self.config_boxes_strings[self.step_idx]} then press enter')
             self.canvas.bind("<Button-1>", self._start_selection)
             self.canvas.bind("<B1-Motion>", self._update_selection)
@@ -52,10 +56,12 @@ class ConfigOverlay:
             self.root.bind("<Return>", self._confirm_selection_box)
 
     def _start_selection(self, event):
-        if self.rect is None:
-            self.start_x = event.x
-            self.start_y = event.y
-            self.rect = self.canvas.create_rectangle(self.start_x, self.start_y, self.start_x, self.start_y, outline="blue", width=1)
+        if self.rect is not None:
+            self.canvas.delete(self.rect)
+            
+        self.start_x = event.x
+        self.start_y = event.y
+        self.rect = self.canvas.create_rectangle(self.start_x, self.start_y, self.start_x, self.start_y, outline="blue", width=1)
 
     def _update_selection(self, event):
         # Update the rectangle as the mouse moves

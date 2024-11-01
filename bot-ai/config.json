@@ -16,30 +16,30 @@
     },
     "recognition": {
         "change_player_button_coordinate": {
-            "x": 1270,
-            "y": 90
+            "x": 682,
+            "y": 118
         },
         "third_person_view_button_coordinate": {
-            "x": 956,
-            "y": 915
+            "x": 987,
+            "y": 87
         },
         "player_name_box": {
-            "x": 1304,
-            "y": 652,
-            "width": 2740,
-            "height": 1332
+            "x": 802,
+            "y": 60,
+            "width": 1936,
+            "height": 201
         },
         "weapon_icon_box": {
-            "x": 1231,
-            "y": 715,
-            "width": 2601,
-            "height": 1530
+            "x": 570,
+            "y": 55,
+            "width": 1572,
+            "height": 217
         },
         "weapon_name_box": {
-            "x": 1229,
-            "y": 817,
-            "width": 2599,
-            "height": 1652
+            "x": 856,
+            "y": 65,
+            "width": 2131,
+            "height": 238
         }
     }
 }

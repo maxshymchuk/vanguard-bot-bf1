@@ -6,7 +6,8 @@ from .parser import parser
 class CliResult:
     immediate_start = False
     verbose = False
-    config_path: str | None = None
+    setup_config = False
+    screenshot = False
 
 def init() -> CliResult:
     res = CliResult()
@@ -16,8 +17,7 @@ def init() -> CliResult:
     if CliArgs.VERBOSE in args:
         res.verbose = args.verbose
     if CliArgs.CONFIG in args:
-        try:
-            res.config_path = args.config
-        except:
-            print('Config path is invalid, using default config')
+        res.setupconfig = args.config
+    if CliArgs.SCREENSHOT in args:
+        res.screenshot = args.screenshot
     return res
