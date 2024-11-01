@@ -28,11 +28,14 @@ if __name__ == '__main__':
 
         config.verbose_errors = cli_result.verbose
 
+        if cli_result.config_path:
+            config.config_path = cli_result.config_path
+
         config.should_save_screenshots = cli_result.screenshot
 
         config_manager = config.init()
 
-        if not config_manager.is_all_positions_set or cli_result.setup_config:
+        if not config_manager.is_all_positions_set or cli_result.resetup:
             coordinate_strs = ['next player', 'third person view']
             box_strs = ['player name area', 'weapon icon area', 'weapon name area']
             input('Press enter to begin setup')
