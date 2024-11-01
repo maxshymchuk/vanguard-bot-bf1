@@ -21,7 +21,7 @@ def _kick(player_name: str, reason: str, persona_id) -> bool:
         return True
     else:
         print('Found player ' + player_name + ' but failed to kick him, JSON: ' + str(content))
-        config.webhook.send(fr"""
+        config.discord_webhook.send(fr"""
 ```
 ❌KICK
     Name: {player_name}

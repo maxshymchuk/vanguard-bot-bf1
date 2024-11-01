@@ -1,10 +1,19 @@
-class Coordinate:
-    def __init__(self, x: int = None, y: int = None) -> None:
-        self.x = x
-        self.y = y
+from enum import StrEnum
+from dataclasses import dataclass
 
+@dataclass
+class Coordinate():
+    x: int = None
+    y: int = None
+
+@dataclass
 class Box(Coordinate):
-    def __init__(self, x: int = None, y: int = None, width: int = None, height: int = None) -> None:
-        super().__init__(x, y)
-        self.width = width
-        self.height = height
+    width: int = None
+    height: int = None
+
+class CliArgs(StrEnum):
+    # flags
+    START = 'start'
+    VERBOSE = 'verbose'
+    # paths
+    CONFIG = 'config'

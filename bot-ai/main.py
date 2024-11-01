@@ -4,7 +4,7 @@ import globals
 import config
 import signal
 import api
-from modules import init, check_image_thread, scan_window_thread
+from modules import cli, check_image_thread, scan_window_thread
 from modules.integration import get_server_id_and_fullname
 
 def handle_signal(signum, frame):
@@ -17,13 +17,15 @@ if __name__ == '__main__':
 
     print('Vanguard Bot Tool')
 
-    immediate_start = init()
-
     try:
-        print(f'Use config? {config.should_read_config}')
-        print(f'Verbose API errors? {config.verbose_errors}')
+        cli_result = cli.init()
 
-        if not immediate_start:
+        config.verbose_errors = cli_result.verbose
+        config.config_path = cli_result.config_path
+
+        config.init()
+
+        if not cli_result.immediate_start:
             input('Press enter to continue')
 
         if not api.init():

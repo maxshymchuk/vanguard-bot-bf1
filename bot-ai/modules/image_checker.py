@@ -53,11 +53,11 @@ def save_weapon_and_player(player_name_img, player_mask, player, weapon_img, wea
 mouse = Controller()
 
 def check_image(active_window) -> None:
-    player_name_img = capture_screen(config.player_name.x, config.player_name.y, config.player_name.width, config.player_name.height)
+    player_name_img = capture_screen(config.player_name_box.x, config.player_name_box.y, config.player_name_box.width, config.player_name_box.height)
     enhanced_player_image, player_mask = enhance_image(player_name_img)
     player = recognize_text(enhanced_player_image, available_nickname_symbols)
 
-    player_weapon_img = capture_screen(config.weapon_name.x, config.weapon_name.y, config.weapon_name.width, config.weapon_name.height)
+    player_weapon_img = capture_screen(config.weapon_name_box.x, config.weapon_name_box.y, config.weapon_name_box.width, config.weapon_name_box.height)
     enhanced_weapon_image, weapon_mask = enhance_weapon_image(player_weapon_img)
     weapon = recognize_text(enhanced_weapon_image, available_weapon_symbols)
 
@@ -75,7 +75,7 @@ def check_image(active_window) -> None:
                 break
 
     # go to next player
-    mouse.position = config.next_player_button.x, config.next_player_button.y
+    mouse.position = config.change_player_button_coordinate.x, config.change_player_button_coordinate.y
     mouse.press(Button.left)
     mouse.release(Button.left)
 
@@ -90,7 +90,6 @@ def check_image_thread() -> None:
                     if not active_window.title == config.window_title:
                         print(f'Window ({config.window_title}) must be active')
                     else:
-                        config.init()
                         check_image(active_window)
                 except FileNotFoundError:
                     print('Image not found')
