@@ -1,6 +1,5 @@
 from classes import CliArgs
 from dataclasses import dataclass
-from helpers import check_if_file
 from .parser import parser
 
 @dataclass
@@ -18,8 +17,6 @@ def init() -> CliResult:
         res.verbose = args.verbose
     if CliArgs.CONFIG in args:
         try:
-            if not check_if_file(args.config):
-                raise
             res.config_path = args.config
         except:
             print('Config path is invalid, using default config')
