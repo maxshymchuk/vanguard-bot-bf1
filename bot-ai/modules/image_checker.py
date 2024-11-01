@@ -43,15 +43,17 @@ def check_image(active_window) -> None:
 
     weapon_icon_img = capture_screen(config.weapon_icon_box.x, config.weapon_icon_box.y, config.weapon_icon_box.width, config.weapon_icon_box.height)
 
+    print('should save screenshot? ' + str(config.should_save_screenshot))
+    if config.should_save_screenshot:
+            print('save screenshot')
+            save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, '', 0)
+
     if player:
         isBanned, bannedWeapon, prediction, probability = check_player_weapons(weapon_icon_img, weapon)
         print(f'Player {player} using weapon {weapon} in category {prediction} with probability {str(probability)}')
         if isBanned:
             find_and_kick_player(player, f'No {bannedWeapon}, Read Rules')
         
-        if config.should_save_screenshot:
-            save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, prediction, str(probability))
-
     # go to next player
     mouse.position = config.change_player_button_coordinate.x, config.change_player_button_coordinate.y
     mouse.press(Button.left)
@@ -71,6 +73,6 @@ def check_image_thread() -> None:
                         check_image(active_window)
                 except FileNotFoundError:
                     print('Image not found')
-                # except Exception as e:
-                #     print(f'Unexpected error: {e}')
+                except Exception as e:
+                    print(f'Unexpected error: {e}')
         time.sleep(0.1) # 1 second interval to check if bot can run

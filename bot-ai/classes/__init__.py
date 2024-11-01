@@ -16,4 +16,5 @@ class CliArgs(StrEnum):
     START = 'start'
     VERBOSE = 'verbose'
     CONFIG = 'config'
+    RESETUP = 'resetup'
     SCREENSHOT = 'screenshot'

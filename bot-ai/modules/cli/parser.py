@@ -7,7 +7,8 @@ parser = argparse.ArgumentParser(
     argument_default = argparse.SUPPRESS
 )
 
-parser.add_argument('-s', f'--{CliArgs.START}', action = 'store_true')
-parser.add_argument('-v', f'--{CliArgs.VERBOSE}', action = 'store_true')
-parser.add_argument('-c', f'--{CliArgs.CONFIG}', action='store_true')
+parser.add_argument('-s', f'--{CliArgs.START}', action='store_true')
+parser.add_argument('-v', f'--{CliArgs.VERBOSE}', action='store_true')
 parser.add_argument('-sc', f'--{CliArgs.SCREENSHOT}', action='store_true')
+parser.add_argument('-r', f'--{CliArgs.RESETUP}', action='store_true')
+parser.add_argument('-c', f'--{CliArgs.CONFIG}', help = 'path to config file')
