@@ -15,7 +15,7 @@ def config_to_json():
     config_json['screenshots_path'] = config.screenshots_path
     config_json['weapon_text_similarity_probability'] = config.weapon_text_similarity_probability
     config_json['player_name_similarity_probability'] = config.player_name_similarity_probability
-    config_json['discord_webhook'] = config.discord_webhook
+    config_json['discord_webhook_url'] = config.discord_webhook_url
     config_json['banned_weapons'] = config.banned_weapons
     config_json['colors'] = {
         'ally_color': ','.join(map(str, config.ally_color)),
@@ -26,19 +26,19 @@ def config_to_json():
         'change_player_button_coordinate': {
             'x': config.change_player_button_coordinate.x,
             'y': config.change_player_button_coordinate.y
-        },
+        } if config.change_player_button_coordinate else None,
         'player_name_box': {
             'x': config.player_name_box.x,
             'y': config.player_name_box.y,
             'width': config.player_name_box.width,
             'height': config.player_name_box.height
-        },
+        } if config.player_name_box else None,
         'weapon_name_box': {
             'x': config.weapon_name_box.x,
             'y': config.weapon_name_box.y,
             'width': config.weapon_name_box.width,
             'height': config.weapon_name_box.height
-        }
+        } if config.weapon_name_box else None
     }
     return config_json
 
@@ -53,8 +53,8 @@ def json_to_config(config_json):
         config.weapon_text_similarity_probability = config_json['weapon_text_similarity_probability']
     if 'player_name_similarity_probability' in config_json:
         config.player_name_similarity_probability = config_json['player_name_similarity_probability']
-    if 'discord_webhook' in config_json:
-        config.discord_webhook = config_json['discord_webhook']
+    if 'discord_webhook_url' in config_json:
+        config.discord_webhook_url = config_json['discord_webhook_url']
     if 'banned_weapons' in config_json:
         config.banned_weapons = config_json['banned_weapons']
 

@@ -11,7 +11,7 @@ schema = {
         'screenshots_path': {
             'type': 'string'
         },
-        'discord_webhook': {
+        'discord_webhook_url': {
             'type': 'string',
             'format': 'uri'
         },

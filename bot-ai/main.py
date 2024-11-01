@@ -21,12 +21,15 @@ if __name__ == '__main__':
         cli_result = cli.init()
 
         config.verbose_errors = cli_result.verbose
-        config.config_path = cli_result.config_path
 
-        config_result = config.init()
+        if cli_result.config_path:
+            config.config_path = cli_result.config_path
 
-        if not config_result.is_all_positions_set:
+        config_manager = config.init()
+
+        if not config_manager.is_all_positions_set:
             configure_positions()
+            config_manager.save()
 
         if not cli_result.immediate_start:
             input('Press enter to continue')
