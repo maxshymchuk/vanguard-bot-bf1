@@ -1,17 +1,17 @@
 from discord import SyncWebhook
-from pathlib import Path
 
-config_path = None
+config_path = 'config.json'
 verbose_errors = False
 
 window_title = 'Battlefield™ 1'
 server_name = '![VG]Vanguard'
-screenshots_path = Path.cwd() / 'screenshots'
+screenshots_path = 'screenshots'
 
 weapon_text_similarity_probability = 0.7
 player_name_similarity_probability = 0.3
 
-discord_webhook = SyncWebhook.from_url('https://discord.com/api/webhooks/1018551113257074709/VASl0wpyhk1fkfjJNizXTejNcI-95SZ-d3NCSF092eiYeqxcR98sOnG7FP_RT6UrI7wn')
+discord_webhook_url = 'https://discord.com/api/webhooks/1018551113257074709/VASl0wpyhk1fkfjJNizXTejNcI-95SZ-d3NCSF092eiYeqxcR98sOnG7FP_RT6UrI7wn'
+webhook = SyncWebhook.from_url(discord_webhook_url)
 
 ally_color = (64, 118, 199)
 enemy_color = (189, 54, 49)

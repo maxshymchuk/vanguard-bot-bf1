@@ -1,15 +1,13 @@
-import os
-from pathlib import Path
 from classes import CliArgs
 from dataclasses import dataclass
+from helpers import check_if_file
 from .parser import parser
-from ..utils import check_if_file
 
 @dataclass
 class CliResult:
     immediate_start = False
     verbose = False
-    config_path = None
+    config_path: str | None = None
 
 def init() -> CliResult:
     res = CliResult()
@@ -22,7 +20,7 @@ def init() -> CliResult:
         try:
             if not check_if_file(args.config):
                 raise
-            res.config_path = Path(args.config).absolute()
+            res.config_path = args.config
         except:
             print('Config path is invalid, using default config')
     return res
