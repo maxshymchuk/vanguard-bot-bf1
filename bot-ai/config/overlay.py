@@ -23,6 +23,12 @@ class ConfigOverlay:
         self.start_y = None
         self.rect = None
 
+        self.DELAY = int(1000 / 60) # Limit to 60fps
+        self.update_id = None
+
+    def update_frame(self):
+        self.update_id = self.root.after(self.DELAY, self.update_frame)
+
     def execute_setup(self) -> tuple[bool, List[Coordinate], List[Box]]:
         print("Starting config setup")
         self.step_idx = 0
@@ -33,6 +39,7 @@ class ConfigOverlay:
         print(f'Click on {self.config_coordinates_strings[0]}')
         self.canvas.bind("<Button-1>", self._get_click_position_coord)
         
+        self.update_frame()
         self.root.mainloop()
         return self.setup_complete, self.coordinate_list, self.box_list
 
@@ -96,4 +103,6 @@ class ConfigOverlay:
         else:
             # Finished setup
             self.setup_complete = True
+            if self.update_id is not None:
+                self.root.after_cancel(self.update_id)
             self.root.destroy()
