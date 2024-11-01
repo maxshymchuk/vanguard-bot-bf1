@@ -75,4 +75,4 @@ def check_image_thread() -> None:
                     print('Image not found')
                 except Exception as e:
                     print(f'Unexpected error: {e}')
-        time.sleep(0.1) # 1 second interval to check if bot can run
+        time.sleep(1) # 1 second interval to check if bot can run

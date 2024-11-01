@@ -4,8 +4,8 @@ from .common import rpc_headers, rpc_request
 from ..utils import print_error_message
 from .. import endpoints
 
-def get_full_server_details_by_game_id(game_id: str) -> tuple[bool, object]:
-    json_body = rpc_request('GameServer.getFullServerDetails', {
+def get_server_details_by_game_id(game_id: str) -> tuple[bool, object]:
+    json_body = rpc_request('GameServer.getServerDetails', {
         'game': 'tunguska',
         'gameId': game_id
     })
