@@ -6,13 +6,14 @@ import config
 import api
 import signal
 import warnings
-# This is not ideal but ImageAI generates a few long warnings that we can't do much about so suppress them...
-warnings.simplefilter('ignore', UserWarning)
-warnings.simplefilter('ignore', FutureWarning)
 import models
 from modules import check_image_thread, scan_window_thread
 from modules import cli, check_image_thread, scan_window_thread
 from modules.integration import get_server_id_and_fullname
+
+# This is not ideal but ImageAI generates a few long warnings that we can't do much about so suppress them...
+warnings.simplefilter('ignore', UserWarning)
+warnings.simplefilter('ignore', FutureWarning)
 
 def handle_signal(signum, frame):
     print('Stopping threads, please wait...')
@@ -27,11 +28,10 @@ if __name__ == '__main__':
         cli_result = cli.init()
 
         config.verbose_errors = cli_result.verbose
+        config.should_save_screenshot = cli_result.screenshot
 
         if cli_result.config_path:
             config.config_path = cli_result.config_path
-
-        config.should_save_screenshots = cli_result.screenshot
 
         config_manager = config.init()
 
@@ -39,8 +39,8 @@ if __name__ == '__main__':
             coordinate_strs = ['next player', 'third person view']
             box_strs = ['player name area', 'weapon icon area', 'weapon name area']
             input('Press enter to begin setup')
-            configoverlay = config.overlay.ConfigOverlay(coordinate_strs, box_strs)
-            success, coordinates, boxes = configoverlay.execute_setup()
+            config_overlay = config.overlay.ConfigOverlay(coordinate_strs, box_strs)
+            success, coordinates, boxes = config_overlay.execute_setup()
             if success:
                 print('Config set')
                 config.change_player_button_coordinate = coordinates[0]
@@ -65,8 +65,8 @@ if __name__ == '__main__':
 
         if not success:
             raise Exception('Failed to get server')
-        
-        success, map_name = integration.
+
+        # success, map_name = integration.
 
         print('Successfully found server', full_server_name)
 

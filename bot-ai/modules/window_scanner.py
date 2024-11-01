@@ -11,4 +11,4 @@ def scan_window_thread() -> None:
                 globals.current_window = gw.getWindowsWithTitle(config.window_title)[0]
             except IndexError:
                 globals.current_window = None
-        time.sleep(3) # 3 second interval to check window still exists
+        time.sleep(3)

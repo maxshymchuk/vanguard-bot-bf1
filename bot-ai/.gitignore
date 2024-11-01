@@ -8,4 +8,5 @@ models/*
 screenshots/*
 !screenshots/README.md
 
+config.json
 test/
