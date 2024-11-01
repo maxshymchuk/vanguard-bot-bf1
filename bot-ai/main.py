@@ -28,14 +28,14 @@ if __name__ == '__main__':
 
         config.verbose_errors = cli_result.verbose
 
-        if cli_result.config_path:
-            config.config_path = cli_result.config_path
+        config.should_save_screenshots = cli_result.screenshot
 
         config_manager = config.init()
 
-        if not config_manager.is_all_positions_set:
+        if not config_manager.is_all_positions_set or cli_result.setup_config:
             coordinate_strs = ['next player', 'third person view']
             box_strs = ['player name area', 'weapon icon area', 'weapon name area']
+            input('Press enter to begin setup')
             configoverlay = config.overlay.ConfigOverlay(coordinate_strs, box_strs)
             success, coordinates, boxes = configoverlay.execute_setup()
             if success:
@@ -46,7 +46,7 @@ if __name__ == '__main__':
                 config.weapon_icon_box = boxes[1]
                 config.weapon_name_box = boxes[2]
             else:
-                print('Failed to set config, exiting')
+                print('Setup config terminated, exiting')
                 quit()
             config_manager.save()
 

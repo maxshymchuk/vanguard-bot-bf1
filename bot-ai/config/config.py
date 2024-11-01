@@ -2,6 +2,7 @@ from discord import SyncWebhook
 
 config_path = 'config.json'
 verbose_errors = False
+should_save_screenshot = False
 
 window_title = 'Battlefield™ 1'
 server_name = '![VG]Vanguard'

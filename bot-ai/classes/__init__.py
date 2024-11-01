@@ -15,5 +15,5 @@ class CliArgs(StrEnum):
     # flags
     START = 'start'
     VERBOSE = 'verbose'
-    # paths
     CONFIG = 'config'
+    SCREENSHOT = 'screenshot'

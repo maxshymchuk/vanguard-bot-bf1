@@ -49,8 +49,8 @@ def check_image(active_window) -> None:
         if isBanned:
             find_and_kick_player(player, f'No {bannedWeapon}, Read Rules')
         
-        #if config.should_save_screenshots:
-            #save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, prediction, str(probability))
+        if config.should_save_screenshot:
+            save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, prediction, str(probability))
 
     # go to next player
     mouse.position = config.change_player_button_coordinate.x, config.change_player_button_coordinate.y
