@@ -18,7 +18,9 @@ enemy_color = (189, 54, 49)
 squad_color = (74, 155, 44)
 
 change_player_button_coordinate = None # Coordinate()
+third_person_view_button_coordinate = None # Coordinate()
 player_name_box = None # Box()
+weapon_icon_box = None # Box()
 weapon_name_box = None # Box()
 
 # dict: common recognition name : pretty name for kick messages

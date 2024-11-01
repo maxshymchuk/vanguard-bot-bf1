@@ -1,5 +1,6 @@
 import time
 import threading
+import config.overlay
 import globals
 import config
 import signal
@@ -18,6 +19,7 @@ if __name__ == '__main__':
     print('Vanguard Bot Tool')
 
     try:
+
         cli_result = cli.init()
 
         config.verbose_errors = cli_result.verbose
@@ -28,7 +30,20 @@ if __name__ == '__main__':
         config_manager = config.init()
 
         if not config_manager.is_all_positions_set:
-            configure_positions()
+            coordinate_strs = ['next player', 'third person view']
+            box_strs = ['player name area', 'weapon icon area', 'weapon name area']
+            configoverlay = config.overlay.ConfigOverlay(coordinate_strs, box_strs)
+            success, coordinates, boxes = configoverlay.execute_setup()
+            if success:
+                print('Config set')
+                config.change_player_button_coordinate = coordinates[0]
+                config.third_person_view_button_coordinate = coordinates[1]
+                config.player_name_box = boxes[0]
+                config.weapon_icon_box = boxes[1]
+                config.weapon_name_box = boxes[2]
+            else:
+                print('Failed to set config, exiting')
+                quit()
             config_manager.save()
 
         if not cli_result.immediate_start:
