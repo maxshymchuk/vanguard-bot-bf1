@@ -15,6 +15,7 @@ def config_to_json():
     config_json['screenshots_path'] = config.screenshots_path
     config_json['weapon_text_similarity_probability'] = config.weapon_text_similarity_probability
     config_json['player_name_similarity_probability'] = config.player_name_similarity_probability
+    config_json['icon_probability'] = config.icon_probability
     config_json['discord_webhook_url'] = config.discord_webhook_url
     config_json['banned_weapons'] = config.banned_weapons
     config_json['colors'] = {
@@ -63,6 +64,8 @@ def json_to_config(config_json):
         config.weapon_text_similarity_probability = config_json['weapon_text_similarity_probability']
     if 'player_name_similarity_probability' in config_json:
         config.player_name_similarity_probability = config_json['player_name_similarity_probability']
+    if 'icon_probability' in config_json:
+        config.icon_probability = config_json['icon_probability']
     if 'discord_webhook_url' in config_json:
         config.discord_webhook_url = config_json['discord_webhook_url']
     if 'banned_weapons' in config_json:

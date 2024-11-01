@@ -10,10 +10,9 @@ import warnings
 warnings.simplefilter('ignore', UserWarning)
 warnings.simplefilter('ignore', FutureWarning)
 import models
-from modules import init, check_image_thread, scan_window_thread
-from modules import cli, check_image_thread, scan_window_thread, configure_positions
+from modules import check_image_thread, scan_window_thread
+from modules import cli, check_image_thread, scan_window_thread
 from modules.integration import get_server_id_and_fullname
-from modules.recognition import recognize_text
 
 def handle_signal(signum, frame):
     print('Stopping threads, please wait...')

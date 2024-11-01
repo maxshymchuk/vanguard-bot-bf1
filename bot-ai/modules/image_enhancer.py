@@ -32,24 +32,11 @@ def enhance_image(image, target_height = 100):
     white_background = np.full_like(image_hsv, 255)
     result = cv.bitwise_and(white_background, white_background, mask = mask)
 
-    # cv.imshow('input', image_array)
-    # cv.imshow('output', result)
-
     return result, mask
 
-def enhance_weapon_image(image, target_height = 100):
+def enhance_weapon_image(image):
     image_array = np.array(image)
 
     image_gray = cv.cvtColor(image_array, cv.COLOR_RGB2GRAY)
-
-    # binary_image = cv.adaptiveThreshold(image_gray, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 3, 1)
-
-    # scale_factor = 1.25
-
-    # # Calculate the new dimensions
-    # new_width = int(binary_image.shape[1] * scale_factor)
-    # new_height = int(binary_image.shape[0] * scale_factor)
-
-    # result = cv.resize(binary_image, (new_width, new_height), interpolation=cv.INTER_CUBIC)
 
     return image_gray, image_array
