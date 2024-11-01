@@ -32,6 +32,14 @@ def save_weapon_and_player(player_name_img, player_mask, player, weapon_img, wea
             if weapon:
                 f.write('\n' + weapon)
 
+def get_map_change() -> bool:
+    success, current_map = get_server_map()
+    if success:
+        if current_map != globals.current_map:
+            globals.current_map = current_map
+            return True
+    return False
+
 mouse = Controller()
 
 def on_press():
@@ -41,8 +49,10 @@ def on_press():
     else:
         print("Unpaused")
 
-
-keyboard.add_hotkey('ctrl', on_press)
+def click_on(x, y):
+    mouse.position = x, y
+    mouse.press(Button.left)
+    mouse.release(Button.left)
     
 def check_image(active_window) -> None:
 
@@ -53,7 +63,15 @@ def check_image(active_window) -> None:
     spectator_text = recognize_text(enhanced_spectator_text_image, available_symbols=common_symbols)
 
     if not spectator_text or (not string_is_similar_to(spectator_text, "SPECTATOR", 0.8) and not string_is_similar_to(spectator_text, "KILLED BY", 0.8)):
-        print('Spectator text not found, map change?')
+        if get_map_change():
+            globals.round_ended = True
+    elif globals.round_ended:
+            globals.round_ended = False
+
+    if globals.round_ended and not globals.bot_cycle_paused:
+        click_on(config.player_view_button_coordinate.x, config.player_view_button_coordinate.y)
+        time.sleep(1)
+        click_on(config.third_person_view_button_coordinate.x, config.third_person_view_button_coordinate.y)
 
     player_name_img = capture_screen(config.player_name_box.x, config.player_name_box.y, config.player_name_box.width, config.player_name_box.height)
     enhanced_player_image, player_mask = enhance_image(player_name_img)
@@ -80,11 +98,10 @@ def check_image(active_window) -> None:
 
     # go to next player
     if not globals.bot_cycle_paused:
-        mouse.position = config.change_player_button_coordinate.x, config.change_player_button_coordinate.y
-        mouse.press(Button.left)
-        mouse.release(Button.left)
+        click_on(config.change_player_button_coordinate.x, config.change_player_button_coordinate.y)
 
 def check_image_thread() -> None:
+    keyboard.add_hotkey('ctrl', on_press)
     while not globals.threads_stop.is_set():
         with globals.threads_lock:
             if not globals.current_window:
@@ -94,10 +111,11 @@ def check_image_thread() -> None:
                     active_window = gw.getActiveWindow()
                     if active_window and not active_window.title == config.window_title:
                         print(f'Window ({config.window_title}) must be active')
+                        time.sleep(1)
                     else:
                         check_image(active_window)
                 except FileNotFoundError:
                     print('Image not found')
                 except Exception as e:
                     print(f'Unexpected error: {e}')
-        time.sleep(1) # 1 second interval to check if bot can run
+        # time.sleep(1) # 1 second interval to check if bot can run

@@ -12,7 +12,7 @@ warnings.simplefilter('ignore', FutureWarning)
 import models
 from modules import check_image_thread, scan_window_thread
 from modules import cli, check_image_thread, scan_window_thread
-from modules.integration import get_server_id_and_fullname, get_players
+from modules.integration import get_server_id_and_fullname, get_players, get_server_map
 
 def handle_signal(signum, frame):
     print('Stopping threads, please wait...')
@@ -67,7 +67,12 @@ if __name__ == '__main__':
         if not success:
             raise Exception('Failed to get server teams')
         
-        print(f'Successfully found server {full_server_name}')
+        success, globals.current_map = get_server_map()
+
+        if not success:
+            raise Exception('Failed to get server map')
+        
+        print(f'Successfully found server {full_server_name} on map {globals.current_map}')
 
         models.load_model()
 
