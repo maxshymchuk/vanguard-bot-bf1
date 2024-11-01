@@ -27,12 +27,22 @@ def config_to_json():
             'x': config.change_player_button_coordinate.x,
             'y': config.change_player_button_coordinate.y
         } if config.change_player_button_coordinate else None,
+        'third_person_view_button_coordinate': {
+            'x': config.third_person_view_button_coordinate.x,
+            'y': config.third_person_view_button_coordinate.y
+        } if config.third_person_view_button_coordinate else None,
         'player_name_box': {
             'x': config.player_name_box.x,
             'y': config.player_name_box.y,
             'width': config.player_name_box.width,
             'height': config.player_name_box.height
         } if config.player_name_box else None,
+        'weapon_icon_box': {
+            'x': config.weapon_icon_box.x,
+            'y': config.weapon_icon_box.y,
+            'width': config.weapon_icon_box.width,
+            'height': config.weapon_icon_box.height
+        } if config.weapon_icon_box else None,
         'weapon_name_box': {
             'x': config.weapon_name_box.x,
             'y': config.weapon_name_box.y,
@@ -76,11 +86,21 @@ def json_to_config(config_json):
             if change_player_button_coordinate:
                 is_all_positions_set = False
                 config.change_player_button_coordinate = Coordinate(change_player_button_coordinate['x'], change_player_button_coordinate['y'])
+        if 'third_person_view_button_coordinate' in config_json['recognition']:
+            third_person_view_button_coordinate = config_json['recognition']['third_person_view_button_coordinate']
+            if third_person_view_button_coordinate:
+                is_all_positions_set = False
+                config.third_person_view_button_coordinate = Coordinate(third_person_view_button_coordinate['x'], third_person_view_button_coordinate['y'])
         if 'player_name_box' in config_json['recognition']:
             player_name_box = config_json['recognition']['player_name_box']
             if player_name_box:
                 is_all_positions_set = False
                 config.player_name_box = Box(player_name_box['x'], player_name_box['y'], player_name_box['width'], player_name_box['height'])
+        if 'weapon_icon_box' in config_json['recognition']:
+            weapon_icon_box = config_json['recognition']['weapon_icon_box']
+            if weapon_icon_box:
+                is_all_positions_set = False
+                config.weapon_icon_box = Box(weapon_icon_box['x'], weapon_icon_box['y'], weapon_icon_box['width'], weapon_icon_box['height'])
         if 'weapon_name_box' in config_json['recognition']:
             weapon_name_box = config_json['recognition']['weapon_name_box']
             if weapon_name_box:
