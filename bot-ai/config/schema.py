@@ -61,7 +61,45 @@ schema = {
                     'required': ['x', 'y'],
                     'additionalProperties': False
                 },
+                'third_person_view_button_coordinate': {
+                    'type': ['object', 'null'],
+                    'properties': {
+                        'x': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'y': {
+                            'type': 'number',
+                            'minimum': 0
+                        }
+                    },
+                    'required': ['x', 'y'],
+                    'additionalProperties': False
+                },
                 'player_name_box': {
+                    'type': ['object', 'null'],
+                    'properties': {
+                        'x': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'y': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'width': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'height': {
+                            'type': 'number',
+                            'minimum': 0
+                        }
+                    },
+                    'required': ['x', 'y', 'width', 'height'],
+                    'additionalProperties': False
+                },
+                'weapon_icon_box': {
                     'type': ['object', 'null'],
                     'properties': {
                         'x': {

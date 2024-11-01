@@ -38,7 +38,7 @@ class ConfigOverlay:
         
         self.root.mainloop()
         return self.setup_complete, self.coordinate_list, self.box_list
-    
+
     def _get_click_position_coord(self, event):
         self.coordinate_list.append(Coordinate(event.x, event.y))
         self.step_idx += 1
@@ -46,9 +46,9 @@ class ConfigOverlay:
             # Next coordinate setup
             print(f'Click on {self.config_coordinates_strings[self.step_idx]}')
         else:
-            # Finished coordinatesd, Goto box setup
+            # Finished coordinates, Goto box setup
             self.step_idx = 0
-            print(f'Drag box over {self.config_boxes_strings[self.step_idx]}')
+            print(f'Drag box over {self.config_boxes_strings[self.step_idx]} then press enter')
             self.canvas.bind("<Button-1>", self._start_selection)
             self.canvas.bind("<B1-Motion>", self._update_selection)
             self.canvas.bind("<ButtonRelease-1>", self._end_selection)
@@ -80,7 +80,7 @@ class ConfigOverlay:
 
             self.step_idx += 1
             if self.step_idx < len(self.config_boxes_strings):
-                print(f'Drag box over {self.config_boxes_strings[self.step_idx]}')
+                print(f'Drag box over {self.config_boxes_strings[self.step_idx]} then press enter')
             else:
                 # Finished setup
                 self.setup_complete = True
