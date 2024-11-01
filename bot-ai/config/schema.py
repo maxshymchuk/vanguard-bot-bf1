@@ -25,6 +25,11 @@ schema = {
             'minimum': 0,
             'maximum': 1
         },
+        'icon_probability': {
+            'type': 'number',
+            'minimum': 0,
+            'maximum': 1
+        },
         'colors': {
             'type': 'object',
             'properties': {

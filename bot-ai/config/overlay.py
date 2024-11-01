@@ -12,10 +12,7 @@ class ConfigOverlay:
         self.root = tk.Tk()
         self.root.attributes("-topmost", True)
         self.root.attributes("-alpha", 0.2)    
-        screen_width = self.root.winfo_screenwidth()
-        screen_height = self.root.winfo_screenheight()
-        # Set the window size to the screen size
-        self.root.geometry(f"{screen_width}x{screen_height}+0+0")
+        self.root.state("zoomed")
         #root.overrideredirect(True) 
         self.root.configure(background='grey')
 
@@ -77,15 +74,15 @@ class ConfigOverlay:
             self.box_list.append(Box(self.start_x, self.start_y, width, height))
             
             self.root.after(500, self._delete_selection_box)
-
-            self.step_idx += 1
-            if self.step_idx < len(self.config_boxes_strings):
-                print(f'Drag box over {self.config_boxes_strings[self.step_idx]} then press enter')
-            else:
-                # Finished setup
-                self.setup_complete = True
-                self.root.destroy()
         
     def _delete_selection_box(self):
         self.canvas.delete(self.rect)
         self.rect = None
+        
+        self.step_idx += 1
+        if self.step_idx < len(self.config_boxes_strings):
+            print(f'Drag box over {self.config_boxes_strings[self.step_idx]} then press enter')
+        else:
+            # Finished setup
+            self.setup_complete = True
+            self.root.destroy()
