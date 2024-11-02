@@ -27,8 +27,16 @@ player_name_box = None # Box()
 weapon_icon_box = None # Box()
 weapon_name_box = None # Box()
 
-# dict: common recognition name : pretty name for kick messages
+# dict: category : {[in game names], pretty name}
 banned_weapons = {
-    'SMG08I8Factory' : 'SMG08'
+    'smg08': 
+        [
+            ['SMG08/18Factory', 'SMG08/18Optical'], 
+            'SMG 08'
+        ], 
+    'heavybomber': 
+        [
+            ['5x HE Cluster Bomb', 'HE Cluster Bombs', '5x 50 kg HE Bomb', '5x Incendiary Cluster Bomb', 'Incendiary Cluster Bomb'], 
+            'heavy bomber'
+        ]
 }
-#'5x HE Cluster Bomb' : 'Heavy Bomber', 'HE Cluster Bombs' : 'Heavy Bomber'}
