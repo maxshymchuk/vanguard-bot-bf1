@@ -55,23 +55,26 @@ def click_on(x, y):
     mouse.release(Button.left)
     
 def check_image(active_window) -> None:
-
-    time.sleep(0.1) # Let everything load in
+    time.sleep(0.05) # Let everything load in
 
     spectator_text_image = capture_screen(config.spectator_text_box.x, config.spectator_text_box.y, config.spectator_text_box.width, config.spectator_text_box.height)
     enhanced_spectator_text_image, spec_mask = enhance_weapon_image(spectator_text_image)
     spectator_text = recognize_text(enhanced_spectator_text_image, available_symbols=common_symbols)
 
-    if not spectator_text or (not string_is_similar_to(spectator_text, "SPECTATOR", 0.8) and not string_is_similar_to(spectator_text, "KILLED BY", 0.8)):
+    if not spectator_text or (not string_is_similar_to(spectator_text, "SPECTATOR", 0.7) and not string_is_similar_to(spectator_text, "KILLED BY", 0.7)):
+        print("no spectator text")
         if get_map_change():
+            print('Round ended')
             globals.round_ended = True
     elif globals.round_ended:
+            print('Round started again')
             globals.round_ended = False
 
     if globals.round_ended and not globals.bot_cycle_paused:
         click_on(config.player_view_button_coordinate.x, config.player_view_button_coordinate.y)
         time.sleep(1)
         click_on(config.third_person_view_button_coordinate.x, config.third_person_view_button_coordinate.y)
+        return
 
     player_name_img = capture_screen(config.player_name_box.x, config.player_name_box.y, config.player_name_box.width, config.player_name_box.height)
     enhanced_player_image, player_mask = enhance_image(player_name_img)
@@ -84,17 +87,18 @@ def check_image(active_window) -> None:
     weapon_icon_img = capture_screen(config.weapon_icon_box.x, config.weapon_icon_box.y, config.weapon_icon_box.width, config.weapon_icon_box.height)
 
     # TODO: Save probabilities too?
-    if config.should_save_screenshot:
-            save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, '', 0, spec_mask)
+
 
     if player:
         if globals.round_ended:
             globals.round_ended = False
 
         isBanned, bannedWeapon, prediction, probability = check_player_weapons(weapon_icon_img, weapon)
-        print(f'Player {player} using weapon {weapon} in category {prediction} with probability {str(probability)}')
+        #print(f'Player {player} using weapon {weapon} in category {prediction} with probability {str(probability)}')
         if isBanned:
             find_and_kick_player(player, f'No {bannedWeapon}, Read Rules')
+            if config.should_save_screenshot:
+                save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, prediction, probability, spec_mask)
 
     # go to next player
     if not globals.bot_cycle_paused:
