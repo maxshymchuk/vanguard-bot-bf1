@@ -11,7 +11,7 @@ def on_press():
     else:
         print("Unpaused")
 
-def listen_keyboard_key_press():
+def register_hotkey():
     keyboard.add_hotkey('ctrl', on_press)
 
 def mouse_click_on(x, y):

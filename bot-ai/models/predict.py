@@ -23,4 +23,4 @@ def load_model():
         number_of_classes = len(classes.keys())
 
 def predict_icon(image):
-    return prediction.classifyImage(np.array(image), result_count=number_of_classes)
+    return prediction.classifyImage(image, result_count=number_of_classes)
