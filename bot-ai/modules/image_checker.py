@@ -16,8 +16,16 @@ from .utils import available_nickname_symbols, available_weapon_symbols, common_
 import pydirectinput
 from .threadpool import ThreadPool
 
-screenshotmanager = None
-threadpool = None
+class _ImageCheckerState:
+    def __init__(self):
+        self.screenshotmanager = ScreenshotManager()
+        num_workers = 4
+        self.threadpool = ThreadPool(num_workers)
+        self.last_player = None
+        self.last_player_count = 0
+        self.rotate_key = 'e'
+
+imagecheckstate = None
 
 def get_map_change() -> bool:
     success, current_map = get_server_map()
@@ -31,31 +39,47 @@ def player_cycle() -> None:
 
     time.sleep(0.1) # Short wait to let icons load in
 
-    player_name_img = screenshotmanager.capture_box(config.player_name_box)
+    player_name_img = imagecheckstate.screenshotmanager.capture_box(config.player_name_box)
     player = recognize_text(player_name_img, available_nickname_symbols)
 
-    if player:
-        weapon_icon_img = screenshotmanager.capture_box(config.weapon_icon_box)
-        weapon = recognize_text(screenshotmanager.capture_box(config.weapon_name_box))
-        # Dispatch thread to check player weapons and possibly kick
-        threadpool.submit_task(check_player_weapons, player, weapon_icon_img, weapon)
+    if not player or len(player) < 3: # Max player name length is 3 so if we read less than 3, the round might have ended
+        globals.round_ended = get_map_change()
+    elif globals.round_ended:
+        globals.round_ended = False
+
+    if globals.round_ended:
+        pydirectinput.keyDown('f3')
+        time.sleep(1)
+
+    if player == imagecheckstate.last_player:
+        imagecheckstate.last_player_count += 1
+        if imagecheckstate.last_player_count == 2:
+            imagecheckstate.last_player_count = 0
+            # Go other way
+            if imagecheckstate.rotate_key == 'e':
+                imagecheckstate.rotate_key == 'q'
+            else:
+                imagecheckstate.rotate_key == 'e'
+            print(f'Got stuck, rotating other way using key {imagecheckstate.rotatekey}')
+
+    weapon_icon_img = imagecheckstate.screenshotmanager.capture_box(config.weapon_icon_box)
+    weapon = recognize_text(imagecheckstate.screenshotmanager.capture_box(config.weapon_name_box))
+    
+    # Dispatch thread to check player weapons and possibly kick
+    imagecheckstate.threadpool.submit_task(check_player_weapons, player, weapon_icon_img, weapon)
 
     # go to next player
     if not globals.bot_cycle_paused:
-        pydirectinput.keyDown('e')
+        pydirectinput.keyDown(imagecheckstate.rotate_key)
         time.sleep(0.1) # Need a short wait to register key presses
-        pydirectinput.keyUp('e')
+        pydirectinput.keyUp(imagecheckstate.rotate_key)
 
 def check_image_thread() -> None:
     # Setup
     register_hotkey()
-    global screenshotmanager
-    screenshotmanager = ScreenshotManager()
 
-    # Create Thread Pool
-    num_workers = 4
-    global threadpool
-    threadpool = ThreadPool(num_workers)
+    global imagecheckstate
+    imagecheckstate = _ImageCheckerState()
 
     while not globals.threads_stop.is_set():
         with globals.threads_lock:
@@ -73,4 +97,4 @@ def check_image_thread() -> None:
                     print('Image not found')
                 except Exception as e:
                     print(f'Unexpected error: {e}')
-        time.sleep(1) # 1 second interval to check if bot can run
+        #time.sleep(1) # 1 second interval to check if bot can run
