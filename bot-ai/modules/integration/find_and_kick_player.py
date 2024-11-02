@@ -7,13 +7,13 @@ def _kick(player_name: str, reason: str, persona_id) -> bool:
 
     # -------------------------------------------------------------------------------
     # Don't kick yet, must test we aren't generating false positives
-    # success, content = api.kick_player(globals.game_id, persona_id, reason)
+    success, content = api.kick_player(globals.game_id, persona_id, reason)
     # -------------------------------------------------------------------------------
-    if True:
+    if success:
         print('Kicked player ' + player_name + ' for reason: ' + reason + '!')
         config.webhook.send(fr"""
 ```
-✅KICK(TEST NOT ACTUAL KICK)
+✅KICK
     Name: {player_name}
     Kick Reason: {reason}
     PID: {persona_id}
@@ -54,7 +54,7 @@ def _search_for_and_kick_player(player_name: str, reason: str) -> bool:
 
 def find_and_kick_player(player_name: str, reason: str) -> bool:
 
-    if _search_for_and_kick_player(player_name, reason, globals.teams):
+    if _search_for_and_kick_player(player_name, reason):
         return True
 
     print('Getting player list again')
@@ -67,7 +67,7 @@ def find_and_kick_player(player_name: str, reason: str) -> bool:
         return False
 
     # Search again
-    if _search_for_and_kick_player(player_name, reason, globals.teams):
+    if _search_for_and_kick_player(player_name, reason):
         return True
 
     # Give up :(
