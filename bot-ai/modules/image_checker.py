@@ -5,14 +5,14 @@ import time
 import os
 import math
 import pygetwindow as gw
-from pynput.mouse import Controller, Button
-from PIL import Image, ImageGrab
+from PIL import Image
+from helpers import print_on_same_line
 from .integration import check_player_weapons, find_and_kick_player, get_server_map
 from .image_enhancer import enhance_image, enhance_weapon_image
 from .screen_capture import capture_screen
 from .recognition import recognize_text
+from .interaction_listeners import listen_keyboard_key_press, mouse_click_on
 from .utils import available_nickname_symbols, available_weapon_symbols, common_symbols, string_is_similar_to
-import keyboard
 
 def save_weapon_and_player(player_name_img, player_mask, player, weapon_img, weapon_mask, weapon, weapon_icon_img, prediction, probability, spectator_text_img):
     postfix = f'{math.trunc(time.time())}-{weapon}'
@@ -40,20 +40,6 @@ def get_map_change() -> bool:
             return True
     return False
 
-mouse = Controller()
-
-def on_press():
-    globals.bot_cycle_paused = not globals.bot_cycle_paused
-    if globals.bot_cycle_paused:
-        print("Paused")
-    else:
-        print("Unpaused")
-
-def click_on(x, y):
-    mouse.position = x, y
-    mouse.press(Button.left)
-    mouse.release(Button.left)
-    
 def check_image(active_window) -> None:
     time.sleep(0.05) # Let everything load in
 
@@ -71,9 +57,9 @@ def check_image(active_window) -> None:
             globals.round_ended = False
 
     if globals.round_ended and not globals.bot_cycle_paused:
-        click_on(config.player_view_button_coordinate.x, config.player_view_button_coordinate.y)
+        mouse_click_on(config.player_view_button_coordinate.x, config.player_view_button_coordinate.y)
         time.sleep(1)
-        click_on(config.third_person_view_button_coordinate.x, config.third_person_view_button_coordinate.y)
+        mouse_click_on(config.third_person_view_button_coordinate.x, config.third_person_view_button_coordinate.y)
         return
 
     player_name_img = capture_screen(config.player_name_box.x, config.player_name_box.y, config.player_name_box.width, config.player_name_box.height)
@@ -102,19 +88,19 @@ def check_image(active_window) -> None:
 
     # go to next player
     if not globals.bot_cycle_paused:
-        click_on(config.change_player_button_coordinate.x, config.change_player_button_coordinate.y)
+        mouse_click_on(config.change_player_button_coordinate.x, config.change_player_button_coordinate.y)
 
 def check_image_thread() -> None:
-    keyboard.add_hotkey('ctrl', on_press)
+    listen_keyboard_key_press()
     while not globals.threads_stop.is_set():
         with globals.threads_lock:
             if not globals.current_window:
-                print(f'Window ({config.window_title}) not found')
+                print_on_same_line(f'Window ({config.window_title}) not found')
             else:
                 try:
                     active_window = gw.getActiveWindow()
                     if active_window and not active_window.title == config.window_title:
-                        print(f'Window ({config.window_title}) must be active')
+                        print_on_same_line(f'Window ({config.window_title}) must be active')
                         time.sleep(1)
                     else:
                         check_image(active_window)

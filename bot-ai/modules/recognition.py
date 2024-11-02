@@ -1,5 +1,4 @@
 import pytesseract
-import numpy as np
 from .utils import replace_wrong_symbols, remove_restricted_symbols, common_symbols
 
 pytesseract.pytesseract.tesseract_cmd = 'tesseract/tesseract.exe'
@@ -10,11 +9,3 @@ def recognize_text(image, available_symbols: str | None = common_symbols) -> str
     words = replace_wrong_symbols(words) # replace error combinations, must be before removing restricted symbols
     words = remove_restricted_symbols(words, available_symbols) # allow only available symbols
     return words or None
-
-def recognize_image(image):
-    img = image.resize((32, 32))
-    img_array = np.array(img) / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
-    # prediction = model.predict(img_array)
-    # print(np.argmax(prediction))
-    # return np.argmax(prediction)

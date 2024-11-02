@@ -13,12 +13,12 @@ def init() -> bool:
     success, apiglobals.access_token = get_access_token()
     if not success:
         print_error_message('Failed to get access token')
-        return False
+        return False, None
 
     resp_auth = get_auth_code()
     if not resp_auth.success:
         print_error_message('Failed to get auth code')
-        return False
+        return False, None
 
     apiglobals.remid = resp_auth.remid
     apiglobals.sid = resp_auth.sid
@@ -26,7 +26,7 @@ def init() -> bool:
     success, session_id_or_error, persona_id = get_session_id_by_authcode(resp_auth.code)
     if not success:
         print_error_message('Failed to get session id', session_id_or_error)
-        return False
+        return False, None
 
     apiglobals.session_id = session_id_or_error
     apiglobals.my_persona_id = persona_id
@@ -34,8 +34,6 @@ def init() -> bool:
     success, name_or_error = get_persona_by_id(apiglobals.my_persona_id)
     if not success:
         print_error_message('Failed to get persona for id', name_or_error)
-        return False
+        return False, None
 
-    print('You are ' + name_or_error)
-
-    return True
+    return True, name_or_error

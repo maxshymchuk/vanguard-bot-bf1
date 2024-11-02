@@ -52,32 +52,41 @@ if __name__ == '__main__':
         if not cli_result.immediate_start:
             input('Press enter to continue')
 
-        if not api.init():
+        print('Fetching API details...', end = ' ')
+
+        success, persona_name = api.init()
+        if not success:
             raise Exception('Failed to init API')
 
-        print('Init API success')
+        print('Success')
+
+        print('You are', persona_name)
+
+        print('Fetching server information...', end = ' ')
 
         success, globals.game_id, full_server_name = get_server_id_and_fullname(config.server_name)
 
         if not success:
             raise Exception('Failed to get server')
-        
+
         success, globals.teams = get_players()
 
         if not success:
             raise Exception('Failed to get server teams')
-        
+
         success, globals.current_map = get_server_map()
 
         if not success:
             raise Exception('Failed to get server map')
-        
-        print(f'Successfully found server {full_server_name} on map {globals.current_map}')
+
+        print('Success')
+
+        print(f'Found server {full_server_name} on map {globals.current_map}')
 
         models.load_model()
 
-        thread1 = threading.Thread(target=scan_window_thread)
-        thread2 = threading.Thread(target=check_image_thread)
+        thread1 = threading.Thread(target = scan_window_thread)
+        thread2 = threading.Thread(target = check_image_thread)
         thread1.start()
         thread2.start()
         while not globals.threads_stop.is_set():
