@@ -51,51 +51,6 @@ schema = {
         'recognition': {
             'type': 'object',
             'properties': {
-                'change_player_button_coordinate': {
-                    'type': ['object', 'null'],
-                    'properties': {
-                        'x': {
-                            'type': 'number',
-                            'minimum': 0
-                        },
-                        'y': {
-                            'type': 'number',
-                            'minimum': 0
-                        }
-                    },
-                    'required': ['x', 'y'],
-                    'additionalProperties': False
-                },
-                'player_view_button_coordinate': {
-                    'type': ['object', 'null'],
-                    'properties': {
-                        'x': {
-                            'type': 'number',
-                            'minimum': 0
-                        },
-                        'y': {
-                            'type': 'number',
-                            'minimum': 0
-                        }
-                    },
-                    'required': ['x', 'y'],
-                    'additionalProperties': False
-                },
-                'third_person_view_button_coordinate': {
-                    'type': ['object', 'null'],
-                    'properties': {
-                        'x': {
-                            'type': 'number',
-                            'minimum': 0
-                        },
-                        'y': {
-                            'type': 'number',
-                            'minimum': 0
-                        }
-                    },
-                    'required': ['x', 'y'],
-                    'additionalProperties': False
-                },
                 'spectator_text_box': {
                     'type': ['object', 'null'],
                     'properties': {
@@ -195,7 +150,19 @@ schema = {
             'type': ['object', 'null'],
             'patternProperties': {
                 '^': {
-                    'type': 'string'
+                    'type': 'array',
+                    'items': [
+                        {
+                            'type': 'array',
+                            'minItems': 1,
+                            'items': {
+                                'type': 'string'
+                            }
+                        },
+                        {
+                            'type': 'string'
+                        }
+                    ]
                 }
             }
         }

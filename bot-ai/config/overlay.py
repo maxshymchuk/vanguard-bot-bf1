@@ -4,9 +4,8 @@ import config
 from classes import Box, Coordinate
 
 class ConfigOverlay:
-    def __init__(self, config_coordinates_strings: List[str], config_boxes_strings: List[str]):
+    def __init__(self, config_boxes_strings: List[str]):
 
-        self.config_coordinates_strings = config_coordinates_strings
         self.config_boxes_strings = config_boxes_strings
 
         self.root = tk.Tk()
@@ -29,38 +28,21 @@ class ConfigOverlay:
     def update_frame(self):
         self.update_id = self.root.after(self.DELAY, self.update_frame)
 
-    def execute_setup(self) -> tuple[bool, List[Coordinate], List[Box]]:
+    def execute_setup(self) -> tuple[bool, List[Box]]:
         print("Starting config setup")
         self.step_idx = 0
         self.setup_complete = False
-        self.coordinate_list: List[Coordinate] = []
         self.box_list: List[Box] = []
 
-        print(f'Click on {self.config_coordinates_strings[0]}')
-        self.canvas.bind("<Button-1>", self._get_click_position_coord)
-        
+        print(f'Drag box over {self.config_boxes_strings[self.step_idx]} then press enter')
+        self.canvas.bind("<Button-1>", self._start_selection)
+        self.canvas.bind("<B1-Motion>", self._update_selection)
+        self.canvas.bind("<ButtonRelease-1>", self._end_selection)
+        self.root.bind("<Return>", self._confirm_selection_box)
+
         self.update_frame()
         self.root.mainloop()
-        return self.setup_complete, self.coordinate_list, self.box_list
-
-    def _get_click_position_coord(self, event):
-        self.coordinate_list.append(Coordinate(event.x_root, event.y_root))
-        self.step_idx += 1
-        if self.step_idx < len(self.config_coordinates_strings):
-            # Next coordinate setup
-            print(f'Click on {self.config_coordinates_strings[self.step_idx]}')
-        else:
-            # Finished coordinates, Goto box setup
-            self.step_idx = 0
-            self.root.withdraw()
-            input('Press enter once on the third person view to continue')
-            self.root.deiconify()
-            self.root.state("zoomed")
-            print(f'Drag box over {self.config_boxes_strings[self.step_idx]} then press enter')
-            self.canvas.bind("<Button-1>", self._start_selection)
-            self.canvas.bind("<B1-Motion>", self._update_selection)
-            self.canvas.bind("<ButtonRelease-1>", self._end_selection)
-            self.root.bind("<Return>", self._confirm_selection_box)
+        return self.setup_complete, self.box_list
 
     def _start_selection(self, event):
         if self.rect is not None:
