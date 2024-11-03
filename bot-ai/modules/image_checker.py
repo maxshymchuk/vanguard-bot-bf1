@@ -2,65 +2,60 @@ import time
 import globals
 import config
 import time
-import os
-import math
 import pygetwindow as gw
-from PIL import Image
 from helpers import print_on_same_line
-from .integration import check_player_weapons, find_and_kick_player, get_server_map
-from .image_enhancer import enhance_image, enhance_weapon_image
+from .integration import check_player_weapons
+from .image_enhancer import enhance_image
 from .screenshot import ScreenshotManager
 from .recognition import recognize_text
-from .interaction_listeners import register_hotkey, mouse_click_on
-from .utils import available_nickname_symbols, available_weapon_symbols, common_symbols, string_is_similar_to
+from .interaction_listeners import register_hotkey
+from .utils import available_nickname_symbols
 import pydirectinput
 from .threadpool import ThreadPool
 
 class _ImageCheckerState:
     def __init__(self):
         self.screenshotmanager = ScreenshotManager()
-        num_workers = 4
-        self.threadpool = ThreadPool(num_workers)
+        self.threadpool = ThreadPool()
         self.last_player = None
-        self.last_player_count = 0
+        self.same_player_count = 0
+        self.no_player_count = 0
         self.rotate_key = 'e'
 
 imagecheckstate = None
 
-def get_map_change() -> bool:
-    success, current_map = get_server_map()
-    if success:
-        if current_map != globals.current_map:
-            globals.current_map = current_map
-            return True
-    return False
-
 def player_cycle() -> None:
 
-    time.sleep(0.1) # Short wait to let icons load in
+    #time.sleep(0.1) # Short wait to let icons load in
 
-    player_name_img = imagecheckstate.screenshotmanager.capture_box(config.player_name_box)
+    player_name_img, _ = enhance_image(imagecheckstate.screenshotmanager.capture_box(config.player_name_box))
     player = recognize_text(player_name_img, available_nickname_symbols)
 
     if not player or len(player) < 3: # Max player name length is 3 so if we read less than 3, the round might have ended
-        globals.round_ended = get_map_change()
+        if not globals.round_ended:
+            print(f'No player count {imagecheckstate.no_player_count}')
+            imagecheckstate.no_player_count += 1
+            if imagecheckstate.no_player_count == 2:
+                globals.round_ended = True
+                imagecheckstate.no_player_count = 0
+        else:
+            pydirectinput.keyDown('f3')
+            time.sleep(1)
+            return
     elif globals.round_ended:
         globals.round_ended = False
-
-    if globals.round_ended:
-        pydirectinput.keyDown('f3')
-        time.sleep(1)
+        imagecheckstate.no_player_count = 0
 
     if player == imagecheckstate.last_player:
-        imagecheckstate.last_player_count += 1
-        if imagecheckstate.last_player_count == 2:
-            imagecheckstate.last_player_count = 0
+        imagecheckstate.same_player_count += 1
+        if imagecheckstate.same_player_count == 2:
+            imagecheckstate.same_player_count = 0
             # Go other way
             if imagecheckstate.rotate_key == 'e':
                 imagecheckstate.rotate_key == 'q'
             else:
                 imagecheckstate.rotate_key == 'e'
-            print(f'Got stuck, rotating other way using key {imagecheckstate.rotatekey}')
+            print(f'Got stuck, rotating other way using key {imagecheckstate.rotate_key}')
 
     weapon_icon_img = imagecheckstate.screenshotmanager.capture_box(config.weapon_icon_box)
     weapon = recognize_text(imagecheckstate.screenshotmanager.capture_box(config.weapon_name_box))
@@ -71,12 +66,12 @@ def player_cycle() -> None:
     # go to next player
     if not globals.bot_cycle_paused:
         pydirectinput.keyDown(imagecheckstate.rotate_key)
-        time.sleep(0.1) # Need a short wait to register key presses
+        time.sleep(0.05) # Need a short wait to register key presses
         pydirectinput.keyUp(imagecheckstate.rotate_key)
 
 def check_image_thread() -> None:
     # Setup
-    register_hotkey()
+    #register_hotkey()
 
     global imagecheckstate
     imagecheckstate = _ImageCheckerState()
