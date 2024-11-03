@@ -59,9 +59,12 @@ def player_cycle() -> None:
 
     weapon_icon_img = imagecheckstate.screenshotmanager.capture_box(config.weapon_icon_box)
     weapon = recognize_text(imagecheckstate.screenshotmanager.capture_box(config.weapon_name_box))
+
+    gadget_slot_1 = recognize_text(imagecheckstate.screenshotmanager.capture_box(config.gadget_slot_1_box))
+    gadget_slot_2 = recognize_text(imagecheckstate.screenshotmanager.capture_box(config.gadget_slot_2_box))
     
     # Dispatch thread to check player weapons and possibly kick
-    imagecheckstate.threadpool.submit_task(check_player_weapons, player, weapon_icon_img, weapon)
+    imagecheckstate.threadpool.submit_task(check_player_weapons, player, weapon_icon_img, weapon, gadget_slot_1, gadget_slot_2)
 
     # go to next player
     if not globals.bot_cycle_paused:

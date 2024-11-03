@@ -18,7 +18,7 @@ def _kick(player_name: str, reason: str, persona_id) -> bool:
 #     Kick Reason: {reason}
 #     PID: {persona_id}
 # ```""", username="VG_Vanguard")
-        return True
+#         return True
     else:
         print('Found player ' + player_name + ' but failed to kick him with reason ' + reason + '\nJSON: ' + str(content))
         config.webhook.send(fr"""

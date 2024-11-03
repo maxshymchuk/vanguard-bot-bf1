@@ -23,6 +23,8 @@ spectator_text_box = None # Box()
 player_name_box = None # Box()
 weapon_icon_box = None # Box()
 weapon_name_box = None # Box()
+gadget_slot_1_box = None # Box()
+gadget_slot_2_box = None # Box()
 
 # dict: category : {[in game names], pretty name}
 banned_weapons = {
@@ -35,5 +37,10 @@ banned_weapons = {
         [
             ['5x HE Cluster Bomb', 'HE Cluster Bombs', '5x 50 kg HE Bomb', '5x Incendiary Cluster Bomb', 'Incendiary Cluster Bomb'], 
             'heavy bomber'
+        ],
+    'gadgets':
+        [
+            ['Rifle Grenade - FR', 'ifle Grenade - FRG', 'Rifle Grenade - HE'],
+            'rifle grenade'
         ]
 }
