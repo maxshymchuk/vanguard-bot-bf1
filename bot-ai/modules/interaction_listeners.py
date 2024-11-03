@@ -13,8 +13,3 @@ def on_press():
 
 def register_hotkey():
     keyboard.add_hotkey('ctrl', on_press)
-
-def mouse_click_on(x, y):
-    mouse.position = x, y
-    mouse.press(Button.left)
-    mouse.release(Button.left)

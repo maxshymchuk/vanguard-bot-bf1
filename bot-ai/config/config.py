@@ -1,7 +1,7 @@
 from discord import SyncWebhook
 
 config_path = 'config.json'
-verbose_errors = False
+verbose = False
 should_save_screenshot = False
 
 window_title = 'Battlefield™ 1'

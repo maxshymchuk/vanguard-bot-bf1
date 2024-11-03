@@ -26,7 +26,7 @@ if __name__ == '__main__':
     try:
         cli_result = cli.init()
 
-        config.verbose_errors = cli_result.verbose
+        config.verbose = cli_result.verbose
         config.should_save_screenshot = cli_result.screenshot
 
         if cli_result.config_path:
@@ -72,19 +72,14 @@ if __name__ == '__main__':
         if not success:
             raise Exception('Failed to get server teams')
 
-        success, globals.current_map = get_server_map()
-
-        if not success:
-            raise Exception('Failed to get server map')
-
         print('Success')
 
-        print(f'Found server {full_server_name} on map {globals.current_map}')
+        print(f'Found server {full_server_name}')
 
         models.load_model()
 
-        thread1 = threading.Thread(target = scan_window_thread)
-        thread2 = threading.Thread(target = check_image_thread)
+        thread1 = threading.Thread(target = scan_window_thread, daemon = True)
+        thread2 = threading.Thread(target = check_image_thread, daemon = True)
         thread1.start()
         thread2.start()
         while not globals.threads_stop.is_set():

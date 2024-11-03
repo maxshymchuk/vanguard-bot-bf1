@@ -18,7 +18,7 @@ def check_player_weapons(player: str, weapon_icon_image, weapon_text: str) -> No
 
     preds, probs = predict_icon(weapon_icon_image)
     prediction = preds[0]
-    probability = probs[0]
+    probability = probs[0] / 100
 
     isBanned = False
     banned_weapon_name = ''
@@ -29,7 +29,6 @@ def check_player_weapons(player: str, weapon_icon_image, weapon_text: str) -> No
         if prediction != 'allowedprimaryguns':
             isBanned, banned_weapon_name = _check_weapon_str(weapon_text, prediction)
     else:
-        print(f'Probability {str(probability)} too low, only checking weapon string')
         isBanned, banned_weapon_name = _check_weapon_str(weapon_text)
 
     if isBanned:
