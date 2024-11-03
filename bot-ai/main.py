@@ -35,13 +35,13 @@ if __name__ == '__main__':
         config_manager = config.init()
 
         if not config_manager.is_all_positions_set or cli_result.resetup:
-            box_strs = ['player name area', 'weapon icon area', 'weapon name area']
+            box_strs = ['player name area', 'weapon icon area', 'weapon name area', 'gadget slot 1 area', 'gadget slot 2 area']
             input('Press enter to begin setup')
             config_overlay = config.overlay.ConfigOverlay(box_strs)
             success, boxes = config_overlay.execute_setup()
             if success:
                 print('Config set')
-                config.player_name_box, config.weapon_icon_box, config.weapon_name_box = boxes
+                config.player_name_box, config.weapon_icon_box, config.weapon_name_box, config.gadget_slot_1_box, config.gadget_slot_2_box = boxes
             else:
                 print('Setup config terminated, exiting')
                 quit()

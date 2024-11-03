@@ -41,7 +41,19 @@ def config_to_json():
             'y': config.weapon_name_box.y,
             'width': config.weapon_name_box.width,
             'height': config.weapon_name_box.height
-        } if config.weapon_name_box else None
+        } if config.weapon_name_box else None,
+        'gadget_slot_1_box': {
+            'x': config.gadget_slot_1_box.x,
+            'y': config.gadget_slot_1_box.y,
+            'width': config.gadget_slot_1_box.width,
+            'height': config.gadget_slot_1_box.height
+        } if config.gadget_slot_1_box else None,
+        'gadget_slot_2_box': {
+            'x': config.gadget_slot_2_box.x,
+            'y': config.gadget_slot_2_box.y,
+            'width': config.gadget_slot_2_box.width,
+            'height': config.gadget_slot_2_box.height
+        } if config.gadget_slot_2_box else None
     }
     return config_json
 
@@ -92,6 +104,18 @@ def json_to_config(config_json):
             weapon_name_box = config_json['recognition']['weapon_name_box']
             if weapon_name_box:
                 config.weapon_name_box = Box(weapon_name_box['x'], weapon_name_box['y'], weapon_name_box['width'], weapon_name_box['height'])
+            else:
+                is_all_positions_set = False
+        if 'gadget_slot_1_box' in config_json['recognition']:
+            gadget_slot_1_box = config_json['recognition']['gadget_slot_1_box']
+            if gadget_slot_1_box:
+                config.gadget_slot_1_box = Box(gadget_slot_1_box['x'], gadget_slot_1_box['y'], gadget_slot_1_box['width'], gadget_slot_1_box['height'])
+            else:
+                is_all_positions_set = False
+        if 'gadget_slot_2_box' in config_json['recognition']:
+            gadget_slot_2_box = config_json['recognition']['gadget_slot_2_box']
+            if gadget_slot_1_box:
+                config.gadget_slot_2_box = Box(gadget_slot_2_box['x'], gadget_slot_2_box['y'], gadget_slot_2_box['width'], gadget_slot_2_box['height'])
             else:
                 is_all_positions_set = False
 

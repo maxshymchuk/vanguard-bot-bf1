@@ -142,6 +142,52 @@ schema = {
                     },
                     'required': ['x', 'y', 'width', 'height'],
                     'additionalProperties': False
+                },
+                'gadget_slot_1_box': {
+                    'type': ['object', 'null'],
+                    'properties': {
+                        'x': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'y': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'width': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'height': {
+                            'type': 'number',
+                            'minimum': 0
+                        }
+                    },
+                    'required': ['x', 'y', 'width', 'height'],
+                    'additionalProperties': False
+                },
+                'gadget_slot_2_box': {
+                    'type': ['object', 'null'],
+                    'properties': {
+                        'x': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'y': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'width': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'height': {
+                            'type': 'number',
+                            'minimum': 0
+                        }
+                    },
+                    'required': ['x', 'y', 'width', 'height'],
+                    'additionalProperties': False
                 }
             },
             'additionalProperties': False
