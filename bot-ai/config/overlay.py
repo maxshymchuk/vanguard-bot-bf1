@@ -1,7 +1,6 @@
 import tkinter as tk
 from typing import List
-import config
-from classes import Box, Coordinate
+from classes import Box
 
 class ConfigOverlay:
     def __init__(self, config_boxes_strings: List[str]):
@@ -39,6 +38,7 @@ class ConfigOverlay:
         self.box_list: List[Box] = []
 
         print(f'Drag box over {self.config_boxes_strings[self.step_idx]} then press enter')
+        self.current_instruction_text = f'Drag box over {self.config_boxes_strings[self.step_idx]} then press enter'
         self.canvas.bind("<Motion>", self._draw_instructions)
         self.canvas.bind("<Button-1>", self._start_selection)
         self.canvas.bind("<B1-Motion>", self._update_selection)
