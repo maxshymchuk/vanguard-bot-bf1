@@ -13,10 +13,10 @@ class ScreenshotManager:
         self.sct = mss.mss()
 
     def __del__(self):
-        self.close()
+        self.sct.close()
 
-    def capture_box(self, box: Box) -> np.array:
-        monitor = {"top": box.y, "left": box.x, "width": box.width, "height": box.height}
+    def capture(self, top, left, width, height) -> np.array:
+        monitor = {"top": top, "left": left, "width": width, "height": height}
         
         sct_img = self.sct.grab(monitor)
         
@@ -24,14 +24,18 @@ class ScreenshotManager:
 
         return img_np
     
-    def save_screenshots(screenshot_names : List[tuple[np.array, str]], title: str, texts: List[str] = []):
+    def new_folder(self, title):
         postfix = f'{math.trunc(time.time())}-{title}'
-        path = f'{config.screenshots_path}/screenshot-{postfix}'
-        os.makedirs(path)
-
+        self.path = f'{config.screenshots_path}/screenshot-{postfix}'
+        os.makedirs(self.path)
+    
+    def save_screenshots(self, screenshot_names : List[tuple[np.array, str]], texts: List[str] = []):
         for screenshot, text in screenshot_names:
-            Image.fromarray(screenshot).save(f'{path}/{text}')
+            Image.fromarray(screenshot).save(f'{self.path}/{text}.png')
 
-        with open(f'{path}/text.txt', 'w') as f:
-            for text in texts:
-                f.write(text)
+        with open(f'{self.path}/text.txt', 'w') as f:
+            f.writelines(text + '\n' for text in texts)
+
+def crop_image_array(image: np.array, box: Box):
+    #print(f'{box.y} {box.height} {box.x} {box.width}')
+    return image[box.y:box.height + box.y, box.x:box.width + box.x]

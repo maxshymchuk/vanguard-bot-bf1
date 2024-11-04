@@ -6,17 +6,18 @@ import pygetwindow as gw
 from helpers import print_on_same_line
 from .integration import check_player_weapons
 from .image_enhancer import enhance_image
-from .screenshot import ScreenshotManager
+from .screenshot import ScreenshotManager, crop_image_array
 from .recognition import recognize_text
 from .interaction_listeners import register_hotkey
 from .utils import available_nickname_symbols
 import pydirectinput
 from .threadpool import ThreadPool
+from PIL import ImageGrab
 
 class _ImageCheckerState:
     def __init__(self):
-        self.screenshotmanager = ScreenshotManager()
         self.threadpool = ThreadPool()
+        self.screenshotmanager = ScreenshotManager()
         self.last_player = None
         self.same_player_count = 0
         self.no_player_count = 0
@@ -24,11 +25,13 @@ class _ImageCheckerState:
 
 imagecheckstate = None
 
-def player_cycle() -> None:
+def player_cycle(active_window: gw.Win32Window) -> None:
 
-    #time.sleep(0.1) # Short wait to let icons load in
+    time.sleep(0.2) # Short wait to let icons load in
 
-    player_name_img, _ = enhance_image(imagecheckstate.screenshotmanager.capture_box(config.player_name_box))
+    game_img = imagecheckstate.screenshotmanager.capture(active_window.top, active_window.left, active_window.width, active_window.height)
+
+    player_name_img, _ = enhance_image(crop_image_array(game_img, config.player_name_box))
     player = recognize_text(player_name_img, available_nickname_symbols)
 
     if not player or len(player) < 3: # Max player name length is 3 so if we read less than 3, the round might have ended
@@ -56,15 +59,9 @@ def player_cycle() -> None:
             else:
                 imagecheckstate.rotate_key == 'e'
             print(f'Got stuck, rotating other way using key {imagecheckstate.rotate_key}')
-
-    weapon_icon_img = imagecheckstate.screenshotmanager.capture_box(config.weapon_icon_box)
-    weapon = recognize_text(imagecheckstate.screenshotmanager.capture_box(config.weapon_name_box))
-
-    gadget_slot_1 = recognize_text(imagecheckstate.screenshotmanager.capture_box(config.gadget_slot_1_box))
-    gadget_slot_2 = recognize_text(imagecheckstate.screenshotmanager.capture_box(config.gadget_slot_2_box))
     
     # Dispatch thread to check player weapons and possibly kick
-    imagecheckstate.threadpool.submit_task(check_player_weapons, player, weapon_icon_img, weapon, gadget_slot_1, gadget_slot_2)
+    imagecheckstate.threadpool.submit_task(check_player_weapons, player, game_img, config.should_save_screenshot)
 
     # go to next player
     if not globals.bot_cycle_paused:
@@ -90,9 +87,9 @@ def check_image_thread() -> None:
                         print_on_same_line(f'Window ({config.window_title}) must be active')
                         time.sleep(1)
                     else:
-                        player_cycle()
+                        player_cycle(active_window)
                 except FileNotFoundError:
                     print('Image not found')
-                except Exception as e:
-                    print(f'Unexpected error: {e}')
+                # except Exception as e:
+                #     print(f'Unexpected error: {e}')
         #time.sleep(1) # 1 second interval to check if bot can run

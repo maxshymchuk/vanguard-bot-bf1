@@ -143,6 +143,29 @@ schema = {
                     'required': ['x', 'y', 'width', 'height'],
                     'additionalProperties': False
                 },
+                'weapon_name_slot2_box': {
+                    'type': ['object', 'null'],
+                    'properties': {
+                        'x': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'y': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'width': {
+                            'type': 'number',
+                            'minimum': 0
+                        },
+                        'height': {
+                            'type': 'number',
+                            'minimum': 0
+                        }
+                    },
+                    'required': ['x', 'y', 'width', 'height'],
+                    'additionalProperties': False
+                },
                 'gadget_slot_1_box': {
                     'type': ['object', 'null'],
                     'properties': {
@@ -209,6 +232,59 @@ schema = {
                             'type': 'string'
                         }
                     ]
+                }
+            }
+        },
+        'banned_gadgets': {
+            'type': 'array',
+            'patternProperties': {
+                '^': {
+                    'type': 'array',
+                    'items': [
+                        {
+                            'type': 'array',
+                            'minItems': 1,
+                            'items': {
+                                'type': 'string'
+                            }
+                        },
+                        {
+                            'type': 'string'
+                        }
+                    ]
+                }
+            }
+        },
+        'banned_vehicles': {
+            'type': ['object', 'null'],
+            'patternProperties': {
+                '^': {
+                    'type': 'array',
+                    'items': {
+                        'anyOf': [
+                            {
+                                'type': 'array',
+                                'items':
+                                {
+                                    'type': 'array',
+                                    'minItems': 2,
+                                    'maxItems': 2,
+                                    'items': 
+                                    {
+                                        'type': 'array',
+                                        'items': 
+                                        {
+                                            'type': 'string'
+                                        }
+
+                                    }
+                                }
+                            },
+                            {
+                            'type': 'string'
+                            }
+                        ]
+                    }
                 }
             }
         }
