@@ -1,11 +1,13 @@
 import threading
+from modules.screenshot import ScreenshotManager
 
 game_id = None
 current_window = None
 
 teams = None
-current_map = None
 round_ended = False
+
+screenshotmanager = ScreenshotManager()
 
 bot_cycle_paused = False
 

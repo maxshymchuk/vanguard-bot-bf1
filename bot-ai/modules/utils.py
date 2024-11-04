@@ -28,5 +28,5 @@ def remove_restricted_symbols(str: str, available_symbols: str | None) -> str:
 def get_string_similarity(str1: str, str2: str) -> float:
     return SequenceMatcher(None, str1, str2).ratio()
 
-def string_is_similar_to(str1: str, str2: str, probability: float) -> float:
+def string_is_similar_to(str1: str, str2: str, probability: float) -> bool:
     return get_string_similarity(str1, str2) >= probability

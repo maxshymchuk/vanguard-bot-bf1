@@ -18,6 +18,8 @@ def config_to_json():
     config_json['icon_probability'] = config.icon_probability
     config_json['discord_webhook_url'] = config.discord_webhook_url
     config_json['banned_weapons'] = config.banned_weapons
+    config_json['banned_gadgets'] = config.banned_gadgets
+    config_json['banned_vehicles'] = config.banned_vehicles
     config_json['colors'] = {
         'ally_color': ','.join(map(str, config.ally_color)),
         'enemy_color': ','.join(map(str, config.enemy_color)),
@@ -41,6 +43,12 @@ def config_to_json():
             'y': config.weapon_name_box.y,
             'width': config.weapon_name_box.width,
             'height': config.weapon_name_box.height
+        } if config.weapon_name_box else None,
+        'weapon_name_slot2_box': {
+            'x': config.weapon_name_slot2_box.x,
+            'y': config.weapon_name_slot2_box.y,
+            'width': config.weapon_name_slot2_box.width,
+            'height': config.weapon_name_slot2_box.height
         } if config.weapon_name_box else None,
         'gadget_slot_1_box': {
             'x': config.gadget_slot_1_box.x,
@@ -74,6 +82,10 @@ def json_to_config(config_json):
         config.discord_webhook_url = config_json['discord_webhook_url']
     if 'banned_weapons' in config_json:
         config.banned_weapons = config_json['banned_weapons']
+    if 'banned_gadgets' in config_json:
+        config.banned_gadgets = config_json['banned_gadgets']
+    if 'banned_vehicles' in config_json:
+        config.banned_vehicles = config_json['banned_vehicles']
 
     if 'colors' in config_json:
         ally_color = str_to_rgb(config_json['colors']['ally_color'])
@@ -104,6 +116,12 @@ def json_to_config(config_json):
             weapon_name_box = config_json['recognition']['weapon_name_box']
             if weapon_name_box:
                 config.weapon_name_box = Box(weapon_name_box['x'], weapon_name_box['y'], weapon_name_box['width'], weapon_name_box['height'])
+            else:
+                is_all_positions_set = False
+        if 'weapon_name_slot2_box' in config_json['recognition']:
+            weapon_name_slot2_box = config_json['recognition']['weapon_name_slot2_box']
+            if weapon_name_slot2_box:
+                config.weapon_name_slot2_box = Box(weapon_name_slot2_box['x'], weapon_name_slot2_box['y'], weapon_name_slot2_box['width'], weapon_name_slot2_box['height'])
             else:
                 is_all_positions_set = False
         if 'gadget_slot_1_box' in config_json['recognition']:

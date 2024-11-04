@@ -17,8 +17,7 @@ def create_masks_by_colors(image_hsv, *colors) -> tuple:
         masks.append(cv.inRange(image_hsv, lower, upper))
     return tuple(masks)
 
-def enhance_image(image, target_height = 100):
-    image_array = np.array(image)
+def enhance_image(image_array, target_height = 100):
 
     height, width = image_array.shape[:2]
     ratio = target_height / height
