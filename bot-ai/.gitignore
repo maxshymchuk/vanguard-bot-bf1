@@ -1,3 +1,7 @@
+.venv
+
+config.json
+
 tesseract/*
 !tesseract/README.md
 
@@ -7,6 +11,3 @@ models/*
 
 screenshots/*
 !screenshots/README.md
-
-config.json
-test/
