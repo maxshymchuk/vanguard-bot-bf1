@@ -12,7 +12,6 @@ from .interaction_listeners import register_hotkey
 from .utils import available_nickname_symbols
 import pydirectinput
 from .threadpool import ThreadPool
-from PIL import ImageGrab
 
 class _ImageCheckerState:
     def __init__(self):
@@ -27,8 +26,9 @@ imagecheckstate = None
 
 def player_cycle(active_window: gw.Win32Window) -> None:
 
-    time.sleep(0.2) # Short wait to let icons load in
+    time.sleep(0.35) # Short wait to let icons load in
 
+    # Todo fix if active_window is none or something stupid
     game_img = imagecheckstate.screenshotmanager.capture(active_window.top, active_window.left, active_window.width, active_window.height)
 
     player_name_img, _ = enhance_image(crop_image_array(game_img, config.player_name_box))
@@ -36,7 +36,6 @@ def player_cycle(active_window: gw.Win32Window) -> None:
 
     if not player or len(player) < 3: # Max player name length is 3 so if we read less than 3, the round might have ended
         if not globals.round_ended:
-            print(f'No player count {imagecheckstate.no_player_count}')
             imagecheckstate.no_player_count += 1
             if imagecheckstate.no_player_count == 2:
                 globals.round_ended = True
@@ -64,14 +63,13 @@ def player_cycle(active_window: gw.Win32Window) -> None:
     imagecheckstate.threadpool.submit_task(check_player_weapons, player, game_img, config.should_save_screenshot)
 
     # go to next player
-    if not globals.bot_cycle_paused:
-        pydirectinput.keyDown(imagecheckstate.rotate_key)
-        time.sleep(0.05) # Need a short wait to register key presses
-        pydirectinput.keyUp(imagecheckstate.rotate_key)
+    pydirectinput.keyDown(imagecheckstate.rotate_key)
+    time.sleep(0.05) # Need a short wait to register key presses
+    pydirectinput.keyUp(imagecheckstate.rotate_key)
 
 def check_image_thread() -> None:
     # Setup
-    #register_hotkey()
+    register_hotkey()
 
     global imagecheckstate
     imagecheckstate = _ImageCheckerState()
@@ -87,7 +85,8 @@ def check_image_thread() -> None:
                         print_on_same_line(f'Window ({config.window_title}) must be active')
                         time.sleep(1)
                     else:
-                        player_cycle(active_window)
+                        if not globals.bot_cycle_paused:
+                            player_cycle(active_window)
                 except FileNotFoundError:
                     print('Image not found')
                 # except Exception as e:

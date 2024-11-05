@@ -2,12 +2,9 @@ from enum import StrEnum
 from dataclasses import dataclass
 
 @dataclass
-class Coordinate():
+class Box():
     x: int = None
     y: int = None
-
-@dataclass
-class Box(Coordinate):
     width: int = None
     height: int = None
 

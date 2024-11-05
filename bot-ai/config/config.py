@@ -19,10 +19,10 @@ ally_color = (64, 118, 199)
 enemy_color = (189, 54, 49)
 squad_color = (74, 155, 44)
 
-spectator_text_box = None # Box()
 player_name_box = None # Box()
 weapon_icon_box = None # Box()
 weapon_name_box = None # Box()
+weapon_name_slot2_box = None # Box()
 gadget_slot_1_box = None # Box()
 gadget_slot_2_box = None # Box()
 
@@ -32,15 +32,49 @@ banned_weapons = {
         [
             ['SMG08/18Factory', 'SMG08/18Optical'], 
             'SMG 08'
-        ], 
-    'heavybomber': 
-        [
-            ['5x HE Cluster Bomb', 'HE Cluster Bombs', '5x 50 kg HE Bomb', '5x Incendiary Cluster Bomb', 'Incendiary Cluster Bomb'], 
-            'heavy bomber'
-        ],
-    'gadgets':
+        ]
+}
+
+banned_gadgets = [
         [
             ['Rifle Grenade - FR', 'ifle Grenade - FRG', 'Rifle Grenade - HE'],
             'rifle grenade'
+        ]
+    ]
+
+# dict: category : [ [variant primary weapon names], [variant secondary weapon names], pretty name) ]
+banned_vehicles = {
+    'heavybomber':
+        [ 
+            [
+                [ 
+                    ['5x HE Cluster Bomb', 'HE Cluster Bombs'], ['HE Auto-Cannon']
+                ],
+                [
+                    ['5x 50 kg HE Bombs'], ['5x 250 kg Demolition Bombs']
+                ],
+                [
+                    ['5x Incendiary Cluster Bomb', 'Incendiary Cluster Bombs'], ['5x Gas Bombs']
+                ]
+            ],
+            'heavy bomber'
+        ],
+    'LMG':
+        [ 
+            [
+                [ 
+                    ['LMG'], ['Anti-Tank Cannon', 'Anti-Aircraft Gun']
+                ],
+            ],
+            'artillery truck'
+        ],
+    'HMG':
+        [
+            [
+                [
+                    ['HMG'], ['Airbust Mortar']
+                ]
+            ],
+            'artillery truck'
         ]
 }

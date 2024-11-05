@@ -1,8 +1,5 @@
 import globals
 import keyboard
-from pynput.mouse import Controller, Button
-
-mouse = Controller()
 
 def on_press():
     globals.bot_cycle_paused = not globals.bot_cycle_paused

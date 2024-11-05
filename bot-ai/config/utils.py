@@ -1,5 +1,5 @@
 import config
-from classes import Box, Coordinate
+from classes import Box
 
 def str_to_rgb(str: str) -> tuple[int, int, int]:
     if not str:
