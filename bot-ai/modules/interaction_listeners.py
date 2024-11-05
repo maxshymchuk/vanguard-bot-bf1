@@ -9,4 +9,4 @@ def on_press():
         print("Unpaused")
 
 def register_hotkey():
-    keyboard.add_hotkey('ctrl', on_press)
+    keyboard.add_hotkey('p', on_press)

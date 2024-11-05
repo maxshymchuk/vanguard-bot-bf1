@@ -32,7 +32,6 @@ class ScreenshotManager:
         os.makedirs(self.path)
     
     def save_screenshots(self, screenshot_names : List[tuple[np.array, str]], texts: List[str] = []):
-        
         if not self.path:
             self.new_folder(self.preliminary_title)
 
