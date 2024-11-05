@@ -9,8 +9,10 @@ from PIL import Image
 import os
 
 class ScreenshotManager:
-    def __init__(self):
+    def __init__(self, preliminary_title = 'notitle'):
         self.sct = mss.mss()
+        self.path = None
+        self.preliminary_title = preliminary_title
 
     def __del__(self):
         self.sct.close()
@@ -30,6 +32,10 @@ class ScreenshotManager:
         os.makedirs(self.path)
     
     def save_screenshots(self, screenshot_names : List[tuple[np.array, str]], texts: List[str] = []):
+        
+        if not self.path:
+            self.new_folder(self.preliminary_title)
+
         for screenshot, text in screenshot_names:
             Image.fromarray(screenshot).save(f'{self.path}/{text}.png')
 
@@ -37,5 +43,4 @@ class ScreenshotManager:
             f.writelines(text + '\n' for text in texts)
 
 def crop_image_array(image: np.array, box: Box):
-    #print(f'{box.y} {box.height} {box.x} {box.width}')
     return image[box.y:box.height + box.y, box.x:box.width + box.x]

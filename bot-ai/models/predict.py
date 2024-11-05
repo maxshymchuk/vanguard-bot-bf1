@@ -3,7 +3,7 @@ import json
 import numpy as np
 import os
 
-weight_file_name = "models/resnet50-bf1ai-test_acc_0.99679_epoch-89.pt"
+weight_file_name = "models/resnet50-bf1ai-test_acc_0.99896_epoch-86.pt"
 json_file_name = "models/bf1ai_model_classes.json"
 number_of_classes = 0
 
