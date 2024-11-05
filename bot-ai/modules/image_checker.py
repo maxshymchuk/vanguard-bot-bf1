@@ -60,7 +60,7 @@ def player_cycle(active_window: gw.Win32Window) -> None:
             print(f'Got stuck, rotating other way using key {imagecheckstate.rotate_key}')
     
     # Dispatch thread to check player weapons and possibly kick
-    imagecheckstate.threadpool.submit_task(check_player_weapons, player, game_img, config.should_save_screenshot)
+    imagecheckstate.threadpool.submit_task(check_player_weapons, player, player_name_img, game_img, config.should_save_screenshot)
 
     # go to next player
     pydirectinput.keyDown(imagecheckstate.rotate_key)
