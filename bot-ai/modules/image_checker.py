@@ -26,7 +26,7 @@ imagecheckstate = None
 
 def player_cycle(active_window: gw.Win32Window) -> None:
 
-    time.sleep(0.35) # Short wait to let icons load in
+    #time.sleep(0.35) # Short wait to let icons load in
 
     # Todo fix if active_window is none or something stupid
     game_img = imagecheckstate.screenshotmanager.capture(active_window.top, active_window.left, active_window.width, active_window.height)
