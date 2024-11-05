@@ -4,9 +4,10 @@ from typing import List
 from mss import mss
 import config
 from modules.screenshot import ScreenshotManager, crop_image_array
-from modules.utils import get_string_similarity, string_is_similar_to
+from modules.utils import  string_is_similar_to
 from .find_and_kick_player import find_and_kick_player
 from modules.recognition import recognize_text
+from modules.image_enhancer import enhance_weapon_image
 import warnings
 # This is not ideal but ImageAI generates a few long warnings that we can't do much about so suppress them...
 warnings.simplefilter('ignore', UserWarning)
@@ -17,7 +18,7 @@ import traceback
 class Slot:
     def __init__(self, slot_num: int, game_img, box: Box):
         self.slot_num = slot_num
-        self.image = crop_image_array(game_img, box)
+        self.image = enhance_weapon_image(crop_image_array(game_img, box))
         self.text = recognize_text(self.image)
 
 @dataclass
@@ -42,8 +43,8 @@ def _check_slot(category, slot: Slot):
     return False, ''
             
 def _find_vehicle_variant_by_slot(vehicletype, slot: Slot):
+    variants, pretty_name = config.banned_vehicles[vehicletype]
     if slot.text:
-        variants, pretty_name = config.banned_vehicles[vehicletype]
         for variant in variants:
             variant = VehicleVariant(variant[0], variant[1])
             for banned_name in variant[slot]:
@@ -59,8 +60,8 @@ def _check_slot_by_vehicle_variant(variant: VehicleVariant, slot: Slot):
     return False
 
 def _check_gadgets_slots(game_img, screenshotmanager, should_save_screenshot) -> tuple[bool, str]:
-    gadget_slot1_image = crop_image_array(game_img, config.gadget_slot_1_box)
-    gadget_slot2_image = crop_image_array(game_img, config.gadget_slot_2_box)
+    gadget_slot1_image = enhance_weapon_image(crop_image_array(game_img, config.gadget_slot_1_box))
+    gadget_slot2_image = enhance_weapon_image(crop_image_array(game_img, config.gadget_slot_2_box))
     gadget_slot1_text = recognize_text(gadget_slot1_image)
     gadget_slot2_text = recognize_text(gadget_slot2_image)
     
@@ -96,6 +97,9 @@ def check_player_weapons(player: str, player_img, game_img, should_save_screensh
         slot1 = Slot(1, game_img, config.weapon_name_box)
         slot2 = None
 
+        # if should_save_screenshot:
+        #     screenshotmanager.save_screenshots([(slot1.image, slot1.text)], [slot1.text])
+
         if probability >= config.icon_probability:
             #print(f'Probability {probability} for prediction {prediction} is enough')
             match prediction:
@@ -105,7 +109,7 @@ def check_player_weapons(player: str, player_img, game_img, should_save_screensh
                     slot2 = Slot(2, game_img, config.weapon_name_slot2_box)
                     isBanned, banned_weapon_name, variant = _find_vehicle_variant_by_slot(prediction, slot1)
                     if not isBanned:
-                        isBanned = _check_slot_by_vehicle_variant(variant, slot2)
+                        isBanned, _, _ = _find_vehicle_variant_by_slot(prediction, slot2)
                 case 'lmg' | 'hmg': # Confirm via slot 2 text
                     slot2 = Slot(2, game_img, config.weapon_name_slot2_box)
                     isBanned, banned_weapon_name, _ = _find_vehicle_variant_by_slot(prediction, slot2)
@@ -121,7 +125,7 @@ def check_player_weapons(player: str, player_img, game_img, should_save_screensh
                 # If not, check vehicle slot 1
                 for vehicle_category in config.banned_vehicles.keys():
                     slot1Found, banned_weapon_name, variant = _find_vehicle_variant_by_slot(vehicle_category, slot1)
-                    if slot1Found: # If yes, check slot 2 as well
+                    if slot1Found: # If yes, check slot 2 as well for confirmation
                         slot2 = Slot(2, game_img, config.weapon_name_slot2_box)
                         isBanned = _check_slot_by_vehicle_variant(variant, slot2)
                         if isBanned:
