@@ -39,7 +39,9 @@ class ScreenshotManager:
             Image.fromarray(screenshot).save(f'{self.path}/{text}.png')
 
         with open(f'{self.path}/text.txt', 'w') as f:
-            f.writelines(text + '\n' for text in texts)
+            for text in texts:
+                if text:
+                    f.writelines(text + '\n')
 
 def crop_image_array(image: np.array, box: Box):
     return image[box.y:box.height + box.y, box.x:box.width + box.x]

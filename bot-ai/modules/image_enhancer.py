@@ -34,8 +34,9 @@ def enhance_image(image_array, target_height = 100):
     return result, mask
 
 def enhance_weapon_image(image):
-    image_array = np.array(image)
+    image_grey = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
-    image_gray = cv.cvtColor(image_array, cv.COLOR_RGB2GRAY)
+    clahe = cv.createCLAHE(clipLimit=1.0, tileGridSize=(4, 4))
+    result = clahe.apply(image_grey)
 
-    return image_gray, image_array
+    return result
