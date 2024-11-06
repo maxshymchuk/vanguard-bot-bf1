@@ -14,3 +14,4 @@ class CliArgs(StrEnum):
     CONFIG = 'config'
     RESETUP = 'resetup'
     SCREENSHOT = 'screenshot'
+    TEST_CONFIG = 'test_config'

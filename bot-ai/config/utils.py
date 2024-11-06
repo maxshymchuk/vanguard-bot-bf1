@@ -13,6 +13,8 @@ def config_to_json():
     config_json['window_title'] = config.window_title
     config_json['server_name'] = config.server_name
     config_json['screenshots_path'] = config.screenshots_path
+    config_json['pause_hotkey'] = config.pause_hotkey
+    config_json['rotate_delay'] = config.rotate_delay
     config_json['weapon_text_similarity_probability'] = config.weapon_text_similarity_probability
     config_json['player_name_similarity_probability'] = config.player_name_similarity_probability
     config_json['icon_probability'] = config.icon_probability
@@ -72,6 +74,10 @@ def json_to_config(config_json):
         config.server_name = config_json['server_name']
     if 'screenshots_path' in config_json:
         config.screenshots_path = config_json['screenshots_path']
+    if 'pause_hotkey' in config_json:
+        config.pause_hotkey = config_json['pause_hotkey']
+    if 'rotate_delay' in config_json:
+        config.rotate_delay = config_json['rotate_delay']
     if 'weapon_text_similarity_probability' in config_json:
         config.weapon_text_similarity_probability = config_json['weapon_text_similarity_probability']
     if 'player_name_similarity_probability' in config_json:

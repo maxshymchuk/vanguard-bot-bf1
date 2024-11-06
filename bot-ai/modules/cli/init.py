@@ -9,6 +9,7 @@ class CliResult:
     screenshot = False
     resetup = False
     config_path = False
+    test_config = False
 
 def init() -> CliResult:
     res = CliResult()
@@ -23,4 +24,6 @@ def init() -> CliResult:
         res.resetup = args.resetup
     if CliArgs.CONFIG in args:
         res.config_path = args.config
+    if CliArgs.TEST_CONFIG in args:
+        res.test_config = args.test_config
     return res

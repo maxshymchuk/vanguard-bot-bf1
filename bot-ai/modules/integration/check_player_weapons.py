@@ -4,7 +4,7 @@ from typing import List
 from mss import mss
 import config
 from modules.screenshot import ScreenshotManager, crop_image_array
-from modules.utils import  string_is_similar_to
+from modules.utils import string_is_similar_to, available_weapon_symbols
 from .find_and_kick_player import find_and_kick_player
 from modules.recognition import recognize_text
 from modules.image_enhancer import enhance_weapon_image
@@ -19,7 +19,7 @@ class Slot:
     def __init__(self, slot_num: int, game_img, box: Box):
         self.slot_num = slot_num
         self.image = enhance_weapon_image(crop_image_array(game_img, box))
-        self.text = recognize_text(self.image)
+        self.text = recognize_text(self.image, available_weapon_symbols)
 
 @dataclass
 class VehicleVariant:
@@ -62,8 +62,8 @@ def _check_slot_by_vehicle_variant(variant: VehicleVariant, slot: Slot):
 def _check_gadgets_slots(game_img, screenshotmanager, should_save_screenshot) -> tuple[bool, str]:
     gadget_slot1_image = enhance_weapon_image(crop_image_array(game_img, config.gadget_slot_1_box))
     gadget_slot2_image = enhance_weapon_image(crop_image_array(game_img, config.gadget_slot_2_box))
-    gadget_slot1_text = recognize_text(gadget_slot1_image)
-    gadget_slot2_text = recognize_text(gadget_slot2_image)
+    gadget_slot1_text = recognize_text(gadget_slot1_image, available_weapon_symbols)
+    gadget_slot2_text = recognize_text(gadget_slot2_image, available_weapon_symbols)
     
     if not gadget_slot1_text:
         gadget_slot1_text = ''

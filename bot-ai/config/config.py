@@ -8,6 +8,9 @@ window_title = 'Battlefield™ 1'
 server_name = '![VG]Vanguard'
 screenshots_path = 'screenshots'
 
+pause_hotkey = 'ctrl+p'
+rotate_delay = 0.0
+
 weapon_text_similarity_probability = 0.8
 player_name_similarity_probability = 0.8
 icon_probability = 0.8
