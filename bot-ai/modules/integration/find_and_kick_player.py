@@ -1,24 +1,30 @@
 import globals
 import config
 import api
-from modules.utils import string_is_similar_to, get_string_similarity
+from modules.utils import get_string_similarity
 
 def _kick(player_name: str, reason: str, persona_id) -> bool:
 
+    if player_name in globals.kick_list:
+        print(f'Player {player_name} already marked for kicking, skipping')
+        return
+    
+    globals.kick_list.add(player_name)
+
     # -------------------------------------------------------------------------------
     # Don't kick yet, must test we aren't generating false positives
-    #success, content = api.kick_player(globals.game_id, persona_id, reason)
+    success, content = api.kick_player(globals.game_id, persona_id, reason)
     # -------------------------------------------------------------------------------
-    if True:
+    if success:
         print('Kicked player ' + player_name + ' for reason: ' + reason + '!')
-#         config.webhook.send(fr"""
-# ```
-# ✅KICK
-#     Name: {player_name}
-#     Kick Reason: {reason}
-#     PID: {persona_id}
-# ```""", username="VG_Vanguard")
-        return True
+        config.webhook.send(fr"""
+```
+✅KICK
+    Name: {player_name}
+    Kick Reason: {reason}
+    PID: {persona_id}
+```""", username="VG_Vanguard")
+        return success
     else:
         print('Found player ' + player_name + ' but failed to kick him with reason ' + reason + '\nJSON: ' + str(content))
         config.webhook.send(fr"""

@@ -7,6 +7,8 @@ current_window = None
 teams = None
 round_ended = False
 
+kick_list = set()
+
 screenshotmanager = ScreenshotManager()
 
 bot_cycle_paused = False

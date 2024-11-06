@@ -13,6 +13,7 @@ import models
 from modules import check_image_thread, scan_window_thread
 from modules import cli, check_image_thread, scan_window_thread
 from modules.integration import get_server_id_and_fullname, get_players, get_server_map
+from modules.utils import get_string_similarity
 
 def handle_signal(signum, frame):
     print('Stopping threads, please wait...')
@@ -22,6 +23,8 @@ def handle_signal(signum, frame):
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, handle_signal)
     print('Vanguard Bot Tool')
+
+    print(get_string_similarity('MP18Optical', 'SMG08/18Optical'))
 
     try:
         cli_result = cli.init()

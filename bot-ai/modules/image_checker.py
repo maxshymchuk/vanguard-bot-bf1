@@ -26,6 +26,9 @@ imagecheckstate = None
 
 def player_cycle(active_window: gw.Win32Window) -> None:
 
+    if not active_window:
+        return
+
     #time.sleep(0.35) # Short wait to let icons load in
 
     # Todo fix if active_window is none or something stupid
@@ -47,6 +50,10 @@ def player_cycle(active_window: gw.Win32Window) -> None:
     elif globals.round_ended:
         globals.round_ended = False
         imagecheckstate.no_player_count = 0
+
+    if player in globals.kick_list:
+        print(f'Player {player} already marked for kicking, skipping')
+        return
 
     if player == imagecheckstate.last_player:
         imagecheckstate.same_player_count += 1
