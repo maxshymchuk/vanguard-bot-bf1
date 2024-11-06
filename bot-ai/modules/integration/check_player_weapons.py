@@ -114,7 +114,7 @@ def check_player_weapons(player: str, player_img, game_img, should_save_screensh
                     slot2 = Slot(2, game_img, config.weapon_name_slot2_box)
                     isBanned, banned_weapon_name, _ = _find_vehicle_variant_by_slot(prediction, slot2)
                 case 'allowedprimaryguns':
-                    _check_gadgets_slots(game_img, screenshotmanager, should_save_screenshot)
+                    isBanned, banned_weapon_name = _check_gadgets_slots(game_img, screenshotmanager, should_save_screenshot)
         else:
             #print(f'Probability {probability} in category {prediction} too low, checking weapon string only')
             # Get weapon image 1

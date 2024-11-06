@@ -2,6 +2,7 @@ import json
 import requests
 from ..utils import print_error_message
 from .. import endpoints
+import globals
 
 def get_players_by_game_id(game_id: str) -> tuple[bool, dict]:
     params = {'gameID': game_id}
@@ -19,6 +20,10 @@ def get_players_by_game_id(game_id: str) -> tuple[bool, dict]:
                     teams['[' + player['platoon'] + ']' + player['name']] = player['player_id']
                 else:
                     teams[player['name']] =  player['player_id']
+
+            # Also remove anyone from the kick list no longer in the game
+            globals.kick_list.intersection_update(teams)
+
             return True, teams
     except Exception as e:
         print_error_message('Failed to get playerlist for game id ' + game_id, e)
