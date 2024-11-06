@@ -15,6 +15,13 @@ schema = {
             'type': 'string',
             'format': 'uri'
         },
+        'pause_hotkey': {
+            'type': 'string'
+        },
+        'rotate_delay': {
+            'type': 'number',
+            'minimum': 0
+        },
         'player_name_similarity_probability': {
             'type': 'number',
             'minimum': 0,

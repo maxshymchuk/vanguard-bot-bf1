@@ -13,18 +13,18 @@ def _kick(player_name: str, reason: str, persona_id) -> bool:
 
     # -------------------------------------------------------------------------------
     # Don't kick yet, must test we aren't generating false positives
-    success, content = api.kick_player(globals.game_id, persona_id, reason)
+    #success, content = api.kick_player(globals.game_id, persona_id, reason)
     # -------------------------------------------------------------------------------
-    if success:
+    if True:
         print('Kicked player ' + player_name + ' for reason: ' + reason + '!')
-        config.webhook.send(fr"""
-```
-✅KICK
-    Name: {player_name}
-    Kick Reason: {reason}
-    PID: {persona_id}
-```""", username="VG_Vanguard")
-        return success
+#         config.webhook.send(fr"""
+# ```
+# ✅KICK
+#     Name: {player_name}
+#     Kick Reason: {reason}
+#     PID: {persona_id}
+# ```""", username="VG_Vanguard")
+        return True
     else:
         print('Found player ' + player_name + ' but failed to kick him with reason ' + reason + '\nJSON: ' + str(content))
         config.webhook.send(fr"""

@@ -29,7 +29,7 @@ def player_cycle(active_window: gw.Win32Window) -> None:
     if not active_window:
         return
 
-    #time.sleep(0.35) # Short wait to let icons load in
+    time.sleep(config.rotate_delay) # Can provide short wait to let icons load in
 
     # Todo fix if active_window is none or something stupid
     game_img = imagecheckstate.screenshotmanager.capture(active_window.top, active_window.left, active_window.width, active_window.height)
@@ -45,6 +45,8 @@ def player_cycle(active_window: gw.Win32Window) -> None:
                 imagecheckstate.no_player_count = 0
         else:
             pydirectinput.keyDown('f3')
+            time.sleep(0.05)
+            pydirectinput.keyUp('f3')
             time.sleep(1)
             return
     elif globals.round_ended:
@@ -96,6 +98,6 @@ def check_image_thread() -> None:
                             player_cycle(active_window)
                 except FileNotFoundError:
                     print('Image not found')
-                # except Exception as e:
-                #     print(f'Unexpected error: {e}')
+                except Exception as e:
+                    print(f'Unexpected error: {e}')
         #time.sleep(1) # 1 second interval to check if bot can run

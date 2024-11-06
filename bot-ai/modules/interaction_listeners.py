@@ -1,5 +1,6 @@
 import globals
 import keyboard
+import config
 
 def on_press():
     globals.bot_cycle_paused = not globals.bot_cycle_paused
@@ -9,4 +10,4 @@ def on_press():
         print("Unpaused")
 
 def register_hotkey():
-    keyboard.add_hotkey('p', on_press)
+    keyboard.add_hotkey(config.pause_hotkey, on_press)

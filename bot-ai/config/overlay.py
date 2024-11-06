@@ -1,6 +1,15 @@
 import tkinter as tk
 from typing import List
 from classes import Box
+import pydirectinput
+from modules.image_enhancer import enhance_image, enhance_weapon_image
+from modules.recognition import recognize_text
+from modules.screenshot import ScreenshotManager, crop_image_array
+import pygetwindow as gw
+import config
+import time
+from helpers import print_on_same_line
+from modules.utils import available_nickname_symbols, available_weapon_symbols
 
 class ConfigOverlay:
     def __init__(self, config_boxes_strings: List[str]):
@@ -104,3 +113,54 @@ class ConfigOverlay:
             if self.update_id is not None:
                 self.root.after_cancel(self.update_id)
             self.root.destroy()
+
+def test_overlay():
+
+    active_window = gw.getActiveWindow()
+
+    while not active_window or active_window.title != config.window_title:
+        print_on_same_line(f'Window ({config.window_title}) must be active for config test')
+        active_window = gw.getActiveWindow()
+        time.sleep(1)
+
+    pydirectinput.keyDown('f3')
+    time.sleep(0.05)
+    pydirectinput.keyUp('f3')
+
+    screenshotmanager = ScreenshotManager()
+
+    for i in range(0, 3):
+
+        time.sleep(0.5)
+
+        game_img = screenshotmanager.capture(active_window.top, active_window.left, active_window.width, active_window.height)
+        player_name_img, _ = enhance_image(crop_image_array(game_img, config.player_name_box))
+        player = recognize_text(player_name_img, available_nickname_symbols)
+
+        weapon_icon_image = crop_image_array(game_img, config.weapon_icon_box)
+
+        slot1_image = enhance_weapon_image(crop_image_array(game_img, config.weapon_name_box))
+        slot1_text = recognize_text(slot1_image, available_weapon_symbols)
+
+        slot2_image = enhance_weapon_image(crop_image_array(game_img, config.weapon_name_slot2_box))
+        slot2_text = recognize_text(slot2_image, available_weapon_symbols)
+
+        gadget_slot1_image = enhance_weapon_image(crop_image_array(game_img, config.gadget_slot_1_box))
+        gadget_slot2_image = enhance_weapon_image(crop_image_array(game_img, config.gadget_slot_2_box))
+        gadget_slot1_text = recognize_text(gadget_slot1_image, available_weapon_symbols)
+        gadget_slot2_text = recognize_text(gadget_slot2_image, available_weapon_symbols)
+
+        screenshots = [(player_name_img, player), (weapon_icon_image, 'icon'), (slot1_image, 'slot 1'), (slot2_image, 'slot 2'), (gadget_slot1_image, 'gadget slot 1'),
+                       (gadget_slot2_image, 'gadget slot 2')]
+        texts = [player, slot1_text, slot2_text, gadget_slot1_text, gadget_slot2_text]
+        screenshotmanager.new_folder(f'{player}-TEST_SCREENSHOT')
+        screenshotmanager.save_screenshots(screenshots, texts)
+        print(f'Screenshot {i + 1} taken for player {player}')
+
+        pydirectinput.keyDown('e')
+        time.sleep(0.05)
+        pydirectinput.keyUp('e')
+
+    print('Screenshots complete')
+
+

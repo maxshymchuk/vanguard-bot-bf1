@@ -12,8 +12,7 @@ warnings.simplefilter('ignore', FutureWarning)
 import models
 from modules import check_image_thread, scan_window_thread
 from modules import cli, check_image_thread, scan_window_thread
-from modules.integration import get_server_id_and_fullname, get_players, get_server_map
-from modules.utils import get_string_similarity
+from modules.integration import get_server_id_and_fullname, get_players
 
 def handle_signal(signum, frame):
     print('Stopping threads, please wait...')
@@ -23,8 +22,6 @@ def handle_signal(signum, frame):
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, handle_signal)
     print('Vanguard Bot Tool')
-
-    print(get_string_similarity('MP18Optical', 'SMG08/18Optical'))
 
     try:
         cli_result = cli.init()
@@ -37,6 +34,7 @@ if __name__ == '__main__':
 
         config_manager = config.init()
 
+        should_test_config = False
         if not config_manager.is_all_positions_set or cli_result.resetup:
             box_strs = ['player name area', 'weapon icon area', 'weapon name area', 'secondary weapon name area', 'gadget slot 1 area', 'gadget slot 2 area']
             input('Press enter to begin setup')
@@ -46,10 +44,15 @@ if __name__ == '__main__':
                 print('Config set')
                 config.player_name_box, config.weapon_icon_box, config.weapon_name_box, config.weapon_name_slot2_box, \
                     config.gadget_slot_1_box, config.gadget_slot_2_box = boxes
+                should_test_config = input('Test config? Y/N ').upper() == 'Y'
             else:
                 print('Setup config terminated, exiting')
                 quit()
             config_manager.save()
+
+        if should_test_config or cli_result.test_config:
+            print(f'Taking screenshots of the next three players, please wait a few seconds then confirm results in {config.screenshots_path}')
+            config.overlay.test_overlay()
 
         if not cli_result.immediate_start:
             input('Press enter to continue')
@@ -90,7 +93,7 @@ if __name__ == '__main__':
             time.sleep(1)
         thread1.join()
         thread2.join()
-    # except Exception as e:
-    #     print(f'Unexpected error: {e}')
+    except Exception as e:
+        print(f'Unexpected error: {e}')
     finally:
         print('Program terminated')
