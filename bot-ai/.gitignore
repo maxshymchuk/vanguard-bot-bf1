@@ -11,3 +11,6 @@ models/*
 
 screenshots/*
 !screenshots/README.md
+
+dist/*
+build/*

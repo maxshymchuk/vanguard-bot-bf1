@@ -16,5 +16,4 @@ def get_player_count_thread(lock) -> None:
             success, player_count = get_player_count()
             if success:
                 globals.player_count = player_count
-            print(f'Updated player count, is now {globals.player_count}')
         time.sleep(30)
