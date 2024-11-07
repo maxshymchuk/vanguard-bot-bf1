@@ -12,7 +12,7 @@ warnings.simplefilter('ignore', FutureWarning)
 import models
 from modules import check_image_thread, scan_window_thread
 from modules import cli, check_image_thread, scan_window_thread
-from modules.integration import get_server_id_and_fullname, get_players
+from modules.integration import get_server_id_and_fullname, get_player_count_thread, get_players
 
 def handle_signal(signum, frame):
     print('Stopping threads, please wait...')
@@ -85,14 +85,19 @@ if __name__ == '__main__':
 
         models.load_model()
 
+        lock = threading.Lock()
+
         thread1 = threading.Thread(target = scan_window_thread, daemon = True)
-        thread2 = threading.Thread(target = check_image_thread, daemon = True)
+        thread2 = threading.Thread(target = check_image_thread, args=(lock,), daemon = True)
+        thread3 = threading.Thread(target = get_player_count_thread, args=(lock,), daemon = True)
         thread1.start()
         thread2.start()
+        thread3.start()
         while not globals.threads_stop.is_set():
             time.sleep(1)
         thread1.join()
         thread2.join()
+        thread3.join()
     except Exception as e:
         print(f'Unexpected error: {e}')
     finally:

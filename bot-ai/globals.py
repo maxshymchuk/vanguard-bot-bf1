@@ -9,6 +9,8 @@ round_ended = False
 
 kick_list = set()
 
+player_count = 0
+
 screenshotmanager = ScreenshotManager()
 
 bot_cycle_paused = False

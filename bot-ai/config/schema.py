@@ -22,6 +22,11 @@ schema = {
             'type': 'number',
             'minimum': 0
         },
+        'minimum_player_count': {
+            'type': 'number',
+            'minimum': 0,
+            'maximum': 64
+        },
         'player_name_similarity_probability': {
             'type': 'number',
             'minimum': 0,

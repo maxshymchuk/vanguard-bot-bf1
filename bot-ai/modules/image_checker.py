@@ -76,7 +76,7 @@ def player_cycle(active_window: gw.Win32Window) -> None:
     time.sleep(0.05) # Need a short wait to register key presses
     pydirectinput.keyUp(imagecheckstate.rotate_key)
 
-def check_image_thread() -> None:
+def check_image_thread(lock) -> None:
     # Setup
     register_hotkey()
 
@@ -95,7 +95,11 @@ def check_image_thread() -> None:
                         time.sleep(1)
                     else:
                         if not globals.bot_cycle_paused:
-                            player_cycle(active_window)
+                            with lock:
+                                if globals.player_count < config.minimum_player_count:
+                                    print(f'Player count {globals.player_count} is less than minimum player count {config.minimum_player_count}, kicking disabled')
+                                    return
+                                player_cycle(active_window)
                 except FileNotFoundError:
                     print('Image not found')
                 except Exception as e:

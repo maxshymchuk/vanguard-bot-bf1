@@ -13,7 +13,7 @@ def _kick(player_name: str, reason: str, persona_id) -> bool:
 
     # -------------------------------------------------------------------------------
     # Don't kick yet, must test we aren't generating false positives
-    #success, content = api.kick_player(globals.game_id, persona_id, reason)
+    # success, content = api.kick_player(globals.game_id, persona_id, reason)
     # -------------------------------------------------------------------------------
     if True:
         print('Kicked player ' + player_name + ' for reason: ' + reason + '!')
