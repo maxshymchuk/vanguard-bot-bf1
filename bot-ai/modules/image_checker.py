@@ -53,23 +53,22 @@ def player_cycle(active_window: gw.Win32Window) -> None:
         globals.round_ended = False
         imagecheckstate.no_player_count = 0
 
-    if player in globals.kick_list:
-        print(f'Player {player} already marked for kicking, skipping')
-        return
-
     if player == imagecheckstate.last_player:
         imagecheckstate.same_player_count += 1
         if imagecheckstate.same_player_count == 2:
             imagecheckstate.same_player_count = 0
             # Go other way
             if imagecheckstate.rotate_key == 'e':
-                imagecheckstate.rotate_key == 'q'
+                imagecheckstate.rotate_key = 'q'
             else:
                 imagecheckstate.rotate_key == 'e'
             print(f'Got stuck, rotating other way using key {imagecheckstate.rotate_key}')
-    
-    # Dispatch thread to check player weapons and possibly kick
-    imagecheckstate.threadpool.submit_task(check_player_weapons, player, player_name_img, game_img, config.should_save_screenshot)
+
+    if player in globals.kick_list:
+        print(f'Player {player} already marked for kicking, skipping')
+    else:
+        # Dispatch thread to check player weapons and possibly kick
+        imagecheckstate.threadpool.submit_task(check_player_weapons, player, player_name_img, game_img, config.should_save_screenshot)
 
     # go to next player
     pydirectinput.keyDown(imagecheckstate.rotate_key)
