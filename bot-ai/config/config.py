@@ -10,6 +10,7 @@ screenshots_path = 'screenshots'
 
 pause_hotkey = 'ctrl+p'
 rotate_delay = 0.0
+minimum_player_count = 50
 
 weapon_text_similarity_probability = 0.8
 player_name_similarity_probability = 0.8
