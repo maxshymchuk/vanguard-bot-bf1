@@ -13,6 +13,7 @@ import models
 from modules import check_image_thread, scan_window_thread
 from modules import cli, check_image_thread, scan_window_thread
 from modules.integration import get_server_id_and_fullname, get_player_count_thread, get_players
+import sys
 
 def handle_signal(signum, frame):
     print('Stopping threads, please wait...')
@@ -47,7 +48,7 @@ if __name__ == '__main__':
                 should_test_config = input('Test config? Y/N ').upper() == 'Y'
             else:
                 print('Setup config terminated, exiting')
-                quit()
+                sys.exit()
             config_manager.save()
 
         if should_test_config or cli_result.test_config:
