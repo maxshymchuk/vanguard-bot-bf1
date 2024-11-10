@@ -11,6 +11,7 @@ screenshots_path = 'screenshots'
 pause_hotkey = 'ctrl+p'
 rotate_delay = 0.0
 minimum_player_count = 50
+rotation_threads = 0
 
 weapon_text_similarity_probability = 0.85
 player_name_similarity_probability = 0.8
@@ -63,7 +64,7 @@ banned_vehicles = {
             ],
             'heavy bomber'
         ],
-    'LMG':
+    'lmg':
         [ 
             [
                 [ 
@@ -72,7 +73,7 @@ banned_vehicles = {
             ],
             'artillery truck'
         ],
-    'HMG':
+    'hmg':
         [
             [
                 [

@@ -14,8 +14,8 @@ import pydirectinput
 from .threadpool import ThreadPool
 
 class _ImageCheckerState:
-    def __init__(self):
-        self.threadpool = ThreadPool()
+    def __init__(self, num_workers):
+        self.threadpool = ThreadPool(num_workers)
         self.screenshotmanager = ScreenshotManager()
         self.last_player = None
         self.same_player_count = 0
@@ -31,11 +31,14 @@ def player_cycle(active_window: gw.Win32Window) -> None:
 
     time.sleep(config.rotate_delay) # Can provide short wait to let icons load in
 
-    # Todo fix if active_window is none or something stupid
     game_img = imagecheckstate.screenshotmanager.capture(active_window.top, active_window.left, active_window.width, active_window.height)
 
     player_name_img, _ = enhance_image(crop_image_array(game_img, config.player_name_box))
     player = recognize_text(player_name_img, available_nickname_symbols)
+
+    # if config.should_save_screenshot:
+    #     imagecheckstate.screenshotmanager.new_folder(player)
+    #     imagecheckstate.screenshotmanager.save_screenshots([(player_name_img, player), (game_img, 'game')])
 
     if not player or len(player) < 3: # Max player name length is 3 so if we read less than 3, the round might have ended
         if not globals.round_ended:
@@ -80,7 +83,7 @@ def check_image_thread(lock) -> None:
     register_hotkey()
 
     global imagecheckstate
-    imagecheckstate = _ImageCheckerState()
+    imagecheckstate = _ImageCheckerState(config.rotation_threads)
 
     while not globals.threads_stop.is_set():
         with globals.threads_lock:
@@ -95,8 +98,7 @@ def check_image_thread(lock) -> None:
                     else:
                         if not globals.bot_cycle_paused:
                             with lock:
-                                if globals.player_count < config.minimum_player_count:
-                                    print(f'Player count {globals.player_count} is less than minimum player count {config.minimum_player_count}, kicking disabled')
+                                if globals.player_count_too_low:
                                     return
                                 player_cycle(active_window)
                 except FileNotFoundError:

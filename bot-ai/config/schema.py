@@ -27,6 +27,10 @@ schema = {
             'minimum': 0,
             'maximum': 64
         },
+        'rotation_threads': {
+            'type': 'number',
+            'minimum': 0
+        },
         'player_name_similarity_probability': {
             'type': 'number',
             'minimum': 0,

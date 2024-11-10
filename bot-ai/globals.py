@@ -9,7 +9,7 @@ round_ended = False
 
 kick_list = set()
 
-player_count = 0
+player_count_too_low = False
 
 screenshotmanager = ScreenshotManager()
 
