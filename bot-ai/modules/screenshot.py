@@ -36,6 +36,8 @@ class ScreenshotManager:
             self.new_folder(self.preliminary_title)
 
         for screenshot, text in screenshot_names:
+            text.replace('/', 'slash')
+            text.replace('.', 'dot')
             Image.fromarray(screenshot).save(f'{self.path}/{text}.png')
 
         with open(f'{self.path}/text.txt', 'w') as f:

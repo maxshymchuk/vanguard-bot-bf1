@@ -3,11 +3,11 @@ import config
 import cv2 as cv
 import numpy as np
 
-def get_color_interval_from_rgb(rgb: tuple[int, int, int], treshold = 80) -> tuple:
+def get_color_interval_from_rgb(rgb: tuple[int, int, int], threshold = 80) -> tuple:
     r, g, b = rgb
     hsv = cv.cvtColor(np.uint8([[[r, g, b]]]), cv.COLOR_RGB2HSV)[0][0]
-    min = np.array([hsv[0] - treshold, 110, 100])
-    max = np.array([hsv[0] + treshold, 255, 255])
+    min= np.array([np.clip(int(hsv[0]) - threshold, 0, 180), 110, 100], dtype=np.uint8)
+    max = np.array([np.clip(int(hsv[0]) + threshold, 0, 180), 255, 255], dtype=np.uint8)
     return min, max
 
 def create_masks_by_colors(image_hsv, *colors) -> tuple:
@@ -23,7 +23,7 @@ def enhance_image(image_array, target_height = 100):
     ratio = target_height / height
     image_array = cv.resize(image_array, (math.trunc(ratio * width), math.trunc(ratio * height)), interpolation = cv.INTER_CUBIC)
 
-    image_hsv = cv.cvtColor(image_array, cv.COLOR_RGB2HSV)
+    image_hsv = cv.cvtColor(image_array, cv.COLOR_BGR2HSV)
 
     masks = create_masks_by_colors(image_hsv, config.ally_color, config.enemy_color)
 

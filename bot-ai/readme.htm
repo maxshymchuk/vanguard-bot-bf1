@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <title>VG Bot Setup</title>
+    <body>
+        <h1>VG Bot Setup</h1>
+        <h2>Requirements for this build</h2>
+        <ul>
+            <li>Game must be in English</li>
+                <ul>
+                    <li>We should be able to make versions for most other languages in the future if required</li>
+                </ul>
+            <li>If you are running the exe file you will (probably) need to run the bot in fullscreen mode</li>
+                <ul>
+                    <li>This is due to some strange anti-screenshot functionality BF1 seems to have in borderless/windowed mode, at least on my PC</li>
+                    <li>If you want to run it in borderless or windowed mode ping us and we can send you the Python version which works in borderless and windowed</li>
+                </ul>
+        </ul>
+        <h2>Setup steps</h2>
+        <h3>Video: <a href="https://www.youtube.com/watch?v=PRxjP3sMVWM">https://www.youtube.com/watch?v=PRxjP3sMVWM</a></h3>
+        <ol>
+            <li>Launch BF1</li>
+            <li>Video settings &rarr; Set to borderless</li>
+            <li>Go into spectate</li>
+            <li>Go to third person view &rarr; Options &rarr; Show player card on</li>
+            <li>Launch vgbot.exe</li>
+            <li>An overlay will appear, follow the setup instructions</li>
+            <li>Once completed the overlay will disappear</li>
+            <li>Video settings &rarr; Set to fullscreen</li>
+            <li>Go back to the program and press Y to test the config</li>
+            <li>Wait a few seconds for the bot to cycle three players</li>
+            <li>Go to the folder with the exe, open screenshots folder, check the images look correct</li>
+            <li>Go back to the program and press enter. The bot will now run</li>
+        </ol>
+        <h2>Config File</h2>
+        <p>You shouldn't need to change much in the config json file. However here is a description of some things you may want to change</p>
+        <ul>
+            <li>Pause hotkey: Press this to toggle the bot cycling players. By default it is Ctrl + P</li>
+            <li>Rotation threads: More threads will mean the bot can run faster but uses more of your CPU. The default, 0, uses the maximum number of your cores</li>
+        </ul>
+        <p><strong>Important:</strong> If you do not use the default colour values in BF1 (red for enemy, blue for team, green for squad) you will need to change the colour option in the config file.
+        <br>Go to colorblind option and write in your custom values as they are written (ally_color = team color)</p>
+
+        <h2>Command Line Arguments</h2>
+        <p>There are some command line arguments you can use.</p>
+            <ul>
+                <li>Right click anywhere in the folder and click "Open in Terminal"</li>
+                <li>Write <code>.\vgbot.exe --help</code> to view all options</li>
+                <li>Use as many of these options as you want e.g <code>.\vgbot.exe -s -sc</code> to make the bot run on launch and save screenshots of kicked players</li>
+            </ul>
+        <p>You can have the bot always use one of these options every time you run it.</p>
+        <ul>
+            <li>Right click on vgbot.exe</li>
+            <li>Show more options &rarr; Create shortcut</li>
+            <li>Right click on the shortcut &rarr; Properties</li>
+            <li>In the target field, after the text already there, enter the argument you want the shortcut to use</li>
+                <ul>
+                    <li>e.g add <code>-s</code> for the bot to run on launch</li>
+                </ul>
+  
+        </ul>
+    <h2>End</h2>
+    <p>If there is a problem dm or ping us in #bot-devs. Thanks for running the bot</p>
+    </body>
+
+</html>

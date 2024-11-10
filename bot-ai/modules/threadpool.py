@@ -4,7 +4,9 @@ import config
 
 class ThreadPool:
 
-    def __init__(self, num_workers = os.cpu_count() + 1) -> None:
+    def __init__(self, num_workers) -> None:
+        if num_workers == 0:
+            num_workers = os.cpu_count() + 1
         self.num_workers = num_workers
         if config.verbose:
             print(f'Using {self.num_workers} threads in thread pool')
