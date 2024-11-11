@@ -12,11 +12,13 @@ from .interaction_listeners import register_hotkey
 from .utils import available_nickname_symbols
 import pydirectinput
 from .threadpool import ThreadPool
+from models import Classifier
 
 class _ImageCheckerState:
     def __init__(self, num_workers):
         self.threadpool = ThreadPool(num_workers)
         self.screenshotmanager = ScreenshotManager()
+        self.classifier = Classifier()
         self.last_player = None
         self.same_player_count = 0
         self.no_player_count = 0
@@ -71,7 +73,7 @@ def player_cycle(active_window: gw.Win32Window) -> None:
         print(f'Player {player} already marked for kicking, skipping')
     else:
         # Dispatch thread to check player weapons and possibly kick
-        imagecheckstate.threadpool.submit_task(check_player_weapons, player, player_name_img, game_img, config.should_save_screenshot)
+        imagecheckstate.threadpool.submit_task(check_player_weapons, imagecheckstate.classifier, player, player_name_img, game_img, config.should_save_screenshot)
 
     # go to next player
     pydirectinput.keyDown(imagecheckstate.rotate_key)

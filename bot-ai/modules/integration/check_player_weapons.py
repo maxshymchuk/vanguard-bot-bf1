@@ -8,12 +8,8 @@ from modules.utils import string_is_similar_to, available_weapon_symbols
 from .find_and_kick_player import find_and_kick_player
 from modules.recognition import recognize_text
 from modules.image_enhancer import enhance_weapon_image
-import warnings
-# This is not ideal but ImageAI generates a few long warnings that we can't do much about so suppress them...
-warnings.simplefilter('ignore', UserWarning)
-warnings.simplefilter('ignore', FutureWarning)
-from models import predict_icon
 import traceback
+from models import Classifier
 
 class Slot:
     def __init__(self, slot_num: int, game_img, box: Box):
@@ -72,30 +68,30 @@ def _check_gadgets_slots(game_img, screenshotmanager, should_save_screenshot) ->
 
     for banned_gadget_list, pretty_name in config.banned_gadgets:
         for banned_gadget in banned_gadget_list:
-            if string_is_similar_to(gadget_slot1_text, banned_gadget, config.weapon_text_similarity_probability):
+            if string_is_similar_to(gadget_slot1_text, banned_gadget, 0.8):
                 if should_save_screenshot:
                     screenshotmanager.save_screenshots([(gadget_slot1_image, 'gadget1'), (gadget_slot2_image, 'gadget2')], [gadget_slot1_text, gadget_slot2_text])
                 return True, pretty_name
-            if string_is_similar_to(gadget_slot2_text, banned_gadget, config.weapon_text_similarity_probability):
+            if string_is_similar_to(gadget_slot2_text, banned_gadget, 0.8):
                 if should_save_screenshot:
                     screenshotmanager.save_screenshots([(gadget_slot1_image, 'gadget1'), (gadget_slot2_image, 'gadget2')], [gadget_slot1_text, gadget_slot2_text])
                 return True, pretty_name
     return False, ''
 
-def check_player_weapons(player: str, player_img, game_img, should_save_screenshot: bool) -> None:
+def check_player_weapons(classifier: Classifier, player: str, player_img, game_img, should_save_screenshot: bool) -> None:
     try:
         screenshotmanager = ScreenshotManager(player)
 
         weapon_icon_image = crop_image_array(game_img, config.weapon_icon_box)
-        preds, probs = predict_icon(weapon_icon_image)
-        prediction = preds[0]
-        probability = probs[0] / 100
+        prediction, probability = classifier.predict_icon(weapon_icon_image)
 
         isBanned = False
         banned_weapon_name = ''
 
         slot1 = Slot(1, game_img, config.weapon_name_box)
         slot2 = None
+
+        # print(f'Slot 1 has weapon {slot1.text} in category {prediction} with probability {probability}')
 
         # if should_save_screenshot:
         #     screenshotmanager.save_screenshots([(slot1.image, slot1.text)], [slot1.text])

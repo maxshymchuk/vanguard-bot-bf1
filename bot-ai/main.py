@@ -5,11 +5,6 @@ import globals
 import config
 import api
 import signal
-import warnings
-# This is not ideal but ImageAI generates a few long warnings that we can't do much about so suppress them...
-warnings.simplefilter('ignore', UserWarning)
-warnings.simplefilter('ignore', FutureWarning)
-import models
 from modules import check_image_thread, scan_window_thread
 from modules import cli, check_image_thread, scan_window_thread
 from modules.integration import get_server_id_and_fullname, get_player_count_thread, get_players
@@ -83,8 +78,6 @@ if __name__ == '__main__':
         print('Success')
 
         print(f'Found server {full_server_name}')
-
-        models.load_model()
 
         lock = threading.Lock()
 
