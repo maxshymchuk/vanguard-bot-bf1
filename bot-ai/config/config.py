@@ -6,6 +6,7 @@ should_save_screenshot = False
 
 window_title = 'Battlefield™ 1'
 server_name = '![VG]Vanguard'
+my_username = 'mystzone44'
 screenshots_path = 'screenshots'
 
 pause_hotkey = 'ctrl+p'
@@ -14,11 +15,14 @@ minimum_player_count = 50
 rotation_threads = 0
 
 weapon_text_similarity_probability = 0.85
+gadget_text_similarity_probability = 0.8
 player_name_similarity_probability = 0.8
 icon_probability = 0.8
 
-discord_webhook_url = 'https://discord.com/api/webhooks/1018551113257074709/VASl0wpyhk1fkfjJNizXTejNcI-95SZ-d3NCSF092eiYeqxcR98sOnG7FP_RT6UrI7wn'
-webhook = SyncWebhook.from_url(discord_webhook_url)
+discord_kick_webhook_url = 'https://discord.com/api/webhooks/1018551113257074709/VASl0wpyhk1fkfjJNizXTejNcI-95SZ-d3NCSF092eiYeqxcR98sOnG7FP_RT6UrI7wn'
+kick_webhook = SyncWebhook.from_url(discord_kick_webhook_url)
+discord_monitoring_webhook_url = 'https://discord.com/api/webhooks/1018549234930298920/xgblYuFI4LFPP5cvYtGlblxke6KaH5sCutIPrDCppq6c9XlJwk93juFMkpbePyvKtDY_'
+monitoring_webhook = SyncWebhook.from_url(discord_monitoring_webhook_url)
 
 ally_color = (64, 118, 199)
 enemy_color = (189, 54, 49)

@@ -8,7 +8,9 @@ def scan_window_thread() -> None:
     while not globals.threads_stop.is_set():
         with globals.threads_lock:
             try:
-                globals.current_window = gw.getWindowsWithTitle(config.window_title)[0]
+                globals.current_window = gw.getActiveWindow()
+                if globals.current_window.title != config.window_title:
+                    globals.current_window = None
             except IndexError:
                 globals.current_window = None
         time.sleep(3)
