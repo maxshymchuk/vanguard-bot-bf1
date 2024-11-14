@@ -65,7 +65,6 @@ def _search_for_and_kick_player(player_name: str, reason: str) -> bool:
 
 def find_and_kick_player(player_name: str, reason: str) -> bool:
 
-    #print('find and kick')
     with globals.teams_lock:
         if _search_for_and_kick_player(player_name, reason):
             return True

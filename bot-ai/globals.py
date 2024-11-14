@@ -12,7 +12,6 @@ kick_lock = threading.Lock()
 kick_list = set()
 players_kicked = 0
 
-lock = threading.Lock()
 last_player = ''
 same_player_count = 0
 no_player_count = 0
