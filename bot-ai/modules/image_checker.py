@@ -5,84 +5,45 @@ import time
 import pygetwindow as gw
 from helpers import print_on_same_line
 from .integration import check_player_weapons
-from .image_enhancer import enhance_image
-from .screenshot import ScreenshotManager, crop_image_array
-from .recognition import recognize_text
-from .interaction_listeners import register_hotkey
-from .utils import available_nickname_symbols
+from threading import Lock
 import pydirectinput
+pydirectinput.FAILSAFE = False
 from .threadpool import ThreadPool
 from models import Classifier
 
 class _ImageCheckerState:
     def __init__(self, num_workers):
         self.threadpool = ThreadPool(num_workers)
-        self.screenshotmanager = ScreenshotManager()
+        self.lock = Lock()
         self.classifier = Classifier()
-        self.last_player = None
-        self.same_player_count = 0
-        self.no_player_count = 0
-        self.rotate_key = 'e'
 
 imagecheckstate = None
 
 def player_cycle(active_window: gw.Win32Window) -> None:
 
-    if not active_window:
-        return
-
     time.sleep(config.rotate_delay) # Can provide short wait to let icons load in
 
-    game_img = imagecheckstate.screenshotmanager.capture(active_window.top, active_window.left, active_window.width, active_window.height)
-
-    player_name_img, _ = enhance_image(crop_image_array(game_img, config.player_name_box))
-    player = recognize_text(player_name_img, available_nickname_symbols)
+    # Dispatch thread to check player weapons and possibly kick
+    imagecheckstate.threadpool.submit_task(check_player_weapons, imagecheckstate.lock, imagecheckstate.classifier, active_window, config.should_save_screenshot)
 
     # if config.should_save_screenshot:
     #     imagecheckstate.screenshotmanager.new_folder(player)
     #     imagecheckstate.screenshotmanager.save_screenshots([(player_name_img, player), (game_img, 'game')])
 
-    if not player or len(player) < 3: # Max player name length is 3 so if we read less than 3, the round might have ended
-        if not globals.round_ended:
-            imagecheckstate.no_player_count += 1
-            if imagecheckstate.no_player_count == 2:
-                globals.round_ended = True
-                imagecheckstate.no_player_count = 0
-        else:
-            pydirectinput.keyDown('f3')
+    with imagecheckstate.lock:
+        if globals.round_ended:
+            pydirectinput.keyDown('f5')
             time.sleep(0.05)
-            pydirectinput.keyUp('f3')
+            pydirectinput.keyUp('f5')
             time.sleep(1)
             return
-    elif globals.round_ended:
-        globals.round_ended = False
-        imagecheckstate.no_player_count = 0
+        
+        # go to next player
+        pydirectinput.keyDown(globals.rotate_key)
+        time.sleep(0.001) # Need a short wait to register key presses
+        pydirectinput.keyUp(globals.rotate_key)
 
-    if player == imagecheckstate.last_player:
-        imagecheckstate.same_player_count += 1
-        if imagecheckstate.same_player_count == 2:
-            imagecheckstate.same_player_count = 0
-            # Go other way
-            if imagecheckstate.rotate_key == 'e':
-                imagecheckstate.rotate_key = 'q'
-            else:
-                imagecheckstate.rotate_key == 'e'
-            print(f'Got stuck, rotating other way using key {imagecheckstate.rotate_key}')
-
-    if player in globals.kick_list:
-        print(f'Player {player} already marked for kicking, skipping')
-    else:
-        # Dispatch thread to check player weapons and possibly kick
-        imagecheckstate.threadpool.submit_task(check_player_weapons, imagecheckstate.classifier, player, player_name_img, game_img, config.should_save_screenshot)
-
-    # go to next player
-    pydirectinput.keyDown(imagecheckstate.rotate_key)
-    time.sleep(0.05) # Need a short wait to register key presses
-    pydirectinput.keyUp(imagecheckstate.rotate_key)
-
-def check_image_thread(lock) -> None:
-    # Setup
-    register_hotkey()
+def check_image_thread() -> None:
 
     global imagecheckstate
     imagecheckstate = _ImageCheckerState(config.rotation_threads)
@@ -90,19 +51,14 @@ def check_image_thread(lock) -> None:
     while not globals.threads_stop.is_set():
         with globals.threads_lock:
             if not globals.current_window:
-                print_on_same_line(f'Window ({config.window_title}) not found')
+                print_on_same_line(f'Window ({config.window_title}) not active')
             else:
                 try:
-                    active_window = gw.getActiveWindow()
-                    if active_window and not active_window.title == config.window_title:
-                        print_on_same_line(f'Window ({config.window_title}) must be active')
-                        time.sleep(1)
-                    else:
-                        if not globals.bot_cycle_paused:
-                            with lock:
-                                if globals.player_count_too_low:
-                                    return
-                                player_cycle(active_window)
+                    if not globals.bot_cycle_paused:
+                        with globals.teams_lock:
+                            if globals.player_count_too_low:
+                                return
+                            player_cycle(globals.current_window)
                 except FileNotFoundError:
                     print('Image not found')
                 except Exception as e:

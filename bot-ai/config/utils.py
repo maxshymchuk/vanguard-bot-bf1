@@ -12,15 +12,18 @@ def config_to_json():
     config_json = {}
     config_json['window_title'] = config.window_title
     config_json['server_name'] = config.server_name
+    config_json['my_username'] = config.my_username
     config_json['screenshots_path'] = config.screenshots_path
     config_json['pause_hotkey'] = config.pause_hotkey
     config_json['rotate_delay'] = config.rotate_delay
     config_json['minimum_player_count'] = config.minimum_player_count
     config_json['rotation_threads'] = config.rotation_threads
     config_json['weapon_text_similarity_probability'] = config.weapon_text_similarity_probability
+    config_json['gadget_text_similarity_probability'] = config.weapon_text_similarity_probability
     config_json['player_name_similarity_probability'] = config.player_name_similarity_probability
     config_json['icon_probability'] = config.icon_probability
-    config_json['discord_webhook_url'] = config.discord_webhook_url
+    config_json['discord_kick_webhook_url'] = config.discord_kick_webhook_url
+    config_json['discord_monitoring_webhook_url'] = config.discord_monitoring_webhook_url
     config_json['banned_weapons'] = config.banned_weapons
     config_json['banned_gadgets'] = config.banned_gadgets
     config_json['banned_vehicles'] = config.banned_vehicles
@@ -74,6 +77,8 @@ def json_to_config(config_json):
         config.window_title = config_json['window_title']
     if 'server_name' in config_json:
         config.server_name = config_json['server_name']
+    if 'my_username' in config_json:
+        config.my_username = config_json['my_username']
     if 'screenshots_path' in config_json:
         config.screenshots_path = config_json['screenshots_path']
     if 'pause_hotkey' in config_json:
@@ -86,12 +91,16 @@ def json_to_config(config_json):
         config.rotation_threads = config_json['rotation_threads']
     if 'weapon_text_similarity_probability' in config_json:
         config.weapon_text_similarity_probability = config_json['weapon_text_similarity_probability']
+    if 'gadget_text_similarity_probability' in config_json:
+        config.weapon_text_similarity_probability = config_json['weapon_text_similarity_probability']
     if 'player_name_similarity_probability' in config_json:
         config.player_name_similarity_probability = config_json['player_name_similarity_probability']
     if 'icon_probability' in config_json:
         config.icon_probability = config_json['icon_probability']
-    if 'discord_webhook_url' in config_json:
-        config.discord_webhook_url = config_json['discord_webhook_url']
+    if 'discord_kick_webhook_url' in config_json:
+        config.discord_kick_webhook_url = config_json['discord_kick_webhook_url']
+    if 'discord_monitoring_webhook_url' in config_json:
+        config.discord_monitoring_webhook_url = config_json['discord_monitoring_webhook_url']
     if 'banned_weapons' in config_json:
         config.banned_weapons = config_json['banned_weapons']
     if 'banned_gadgets' in config_json:

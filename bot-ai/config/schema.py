@@ -5,13 +5,20 @@ schema = {
         'server_name': {
             'type': 'string'
         },
+        'my_username': {
+            'type': 'string'
+        },
         'window_title': {
             'type': 'string'
         },
         'screenshots_path': {
             'type': 'string'
         },
-        'discord_webhook_url': {
+        'discord_kick_webhook_url': {
+            'type': 'string',
+            'format': 'uri'
+        },
+        'discord_monitoring_webhook_url': {
             'type': 'string',
             'format': 'uri'
         },
@@ -37,6 +44,11 @@ schema = {
             'maximum': 1
         },
         'weapon_text_similarity_probability': {
+            'type': 'number',
+            'minimum': 0,
+            'maximum': 1
+        },
+        'gadget_text_similarity_probability': {
             'type': 'number',
             'minimum': 0,
             'maximum': 1
