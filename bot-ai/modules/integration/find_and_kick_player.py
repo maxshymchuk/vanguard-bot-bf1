@@ -18,7 +18,8 @@ def _kick(player_name: str, reason: str, persona_id) -> bool:
         if success:
             print('Kicked player ' + player_name + ' for reason: ' + reason + '!')
             globals.players_kicked += 1
-            config.kick_webhook.send(fr"""
+            if config.kick_webhook:
+                config.kick_webhook.send(fr"""
 ```
 ✅KICK
     Name: {player_name}
@@ -30,7 +31,8 @@ def _kick(player_name: str, reason: str, persona_id) -> bool:
             print('Found player ' + player_name + ' but failed to kick him with reason ' + reason)
             if config.verbose:
                 print(f'Error: {str(content)}')
-            config.webhook.send(fr"""
+            if config.kick_webhook:
+                config.kick_webhook.send(fr"""
 ```
 ❌KICK FAILED
     Name: {player_name}
