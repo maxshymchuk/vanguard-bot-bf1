@@ -1,5 +1,7 @@
 # Vanguard Bot Tool AI
 
+### For more detailed instruction of how to use it read [here](./readme.htm)
+
 ## Requirements
 
 | Tool | Why? | Where? |
@@ -34,5 +36,3 @@
 2. Run the script
    
    Run `python .\train\train.py` to start training process
-
-## For more detailed instruction of hot to use the bot read `readme.htm` in the root
